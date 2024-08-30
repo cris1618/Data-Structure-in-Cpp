@@ -1,0 +1,250 @@
+#+TITLE: Preparation Codes
+#+AUTHOR: Cristian Del Gobbo (pledged)
+
+#+name_src: Program 1
+#+begin_src C++ :results output
+  #include <iostream>
+  using namespace std;
+
+  int main(){
+
+    int a = 10;
+    int b = 11;
+
+    cout << a << " , " << b;
+
+    return 0;
+
+  }
+
+#+end_src
+#+RESULTS:
+: 10 , 11
+
+#+name_src: Program 2
+#+begin_src C :results output
+  #include <stdio.h>
+  int main(){
+
+    int sum = 0;
+    int a = 13;
+    int b = 17;
+
+    sum = a + b;
+
+    printf("The sum of %d and %d is %d", a, b, sum);
+
+
+    return 0;
+  }
+
+
+#+end_src
+#+RESULTS:
+: The sum of 13 and 17 is 30
+
+#+name_src: Program 3
+#+begin_src C :results output
+  #include <stdio.h>
+
+  int main(){
+
+    float myFloat = 3.14;
+    int myInt = 3;
+    double myDouble = 3.14159;
+
+    printf("myFloat = %.2f\nmyInt = %d\nmyDouble = %.5f", myFloat, myInt, myDouble);
+
+    return 0;
+  }
+
+#+end_src
+#+RESULTS:
+: myFloat = 3.14
+: myInt = 3
+: myDouble = 3.14159
+
+#+name_src: Program 4
+#+begin_src C :results output
+  #include <stdio.h>
+
+  int main(){
+
+    const float pi = 3.14159;
+    int radius = 1;
+
+    float diameter = radius*2;
+    float area = pi * (radius*radius);
+
+    printf("The area of a circle of diameter %g is %g", diameter, area);
+
+
+    return 0;
+  }
+
+#+end_src
+#+RESULTS:
+: The area of a circle of diameter 2 is 3.14159
+
+#+name_src: Program 5
+#+begin_src C++ :results output
+/*#include <iostream>
+using namespace std;
+
+int main()
+{
+  int time;
+  cout << "Enter time in seconds:\n";
+  cin >> time;
+  cout << "You entered: " << time << " seconds." << endl;
+  int answer = (32 * time * time) / 2;
+  cout << "The distance is ";
+  cout << answer;
+  cout << " feet.\n";
+  return 0;
+}*/
+
+#+end_src
+
+#+name_src: Program 6
+#+begin_src C++ :results output
+  #include <iostream>
+  using namespace std;
+
+  int main(){
+
+    double sampleSize = 14.58093;
+    sampleSize += 12.495;
+
+    cout << int(sampleSize) << endl;
+
+    return 0;
+  }
+
+#+end_src
+#+RESULTS:
+: 27
+
+#+name_src: Program 7 
+#+begin_src C++ :results output
+  #include <iostream>
+  using namespace std;
+
+  int main(){
+
+    int a = 3;
+    int b = 7;
+
+    if (a<b){
+      cout << "a is smaller than b" << endl;
+    }else if(a>b){
+      cout << "a is bigger than b" << endl;
+    }else{
+      cout << "a and b are the same" << endl;
+    }
+
+    return 0;
+  }
+
+#+end_src
+#+RESULTS:
+: a is smaller than b
+
+#+name_src: Prgram 8
+#+begin_src C++ :results output :tangle p8.c
+  #include <iostream>
+  using namespace std;
+
+  int main() {
+   
+    int a = 3;
+    int b = 7;
+    char choice;
+    int iterations = 0;
+
+    while (true) {
+      if (a < b) {
+	cout << "a is smaller than b" << endl;
+      } else if (a > b) {
+	cout << "a is bigger than b" << endl;
+      } else {
+	cout << "a and b are the same" << endl;
+      }
+
+      iterations++; 
+
+       
+      cout << "Do you want to quit or continue playing? (q to quit, any other key to continue): ";
+      cin >> choice;
+
+      if (choice == 'q' || choice == 'Q') {
+	break; 
+      }
+    }
+
+   
+    cout << "Number of iterations: " << iterations << endl;
+
+    return 0;
+  }
+
+#+end_src
+#+RESULTS:
+
+#+name_src: Program 9
+#+begin_src C++ :results output :tangle p9.c
+  #include <iostream>
+  using namespace std;
+
+  int main() {
+
+    int myArray[10];
+
+    for(int i = 0; i<10; i++){
+      cout << "Enter a value for index "<< i << ":";
+      cin >> myArray[i];
+    }
+
+    cout << "The values in the array are:" << endl;
+    for(int i = 0; i<10; i++){
+      cout << "The value for Index " << i << " is: " << myArray[i] << endl;
+    }
+    return 0;
+  }
+
+#+end_src
+
+#+name_src: Program 10
+#+begin_src C++ :results output :tangle p10.c
+  #include <iostream>
+  using namespace std;
+
+  float calculatekmh(int km, int hours){
+    if (hours == 0){
+      cout << "Error: division by 0" << endl;
+      return 0;
+    }
+
+    float kmh = km/hours;
+    return kmh;
+  }
+
+  int main() {
+
+    int km = 0;
+    int hours = 0;
+
+
+    cout << "Enter number of kilometers travelled: " << endl;
+    cin >> km;
+
+    cout << "Enter number of hours travelled: " << endl;
+    cin >> hours;
+
+    float average_speed = calculatekmh(km, hours);
+    cout << "Your average speed was: " << average_speed << "km/h" << endl;
+
+    return 0;
+  }
+
+#+end_src
