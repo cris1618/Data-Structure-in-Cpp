@@ -4,7 +4,7 @@
 #+STARTUP: overview hideblocks indent
 #+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
 
-* Review 29 August
+* Lecture 1: Arrays Review
 
 #+begin_src C
   // Declare an Array 
@@ -98,3 +98,55 @@
 
 #+RESULTS:
 : 0 1 4 9 16 25 36 49 64 81 
+
+#+begin_src C
+int A[2] = {100, 200};
+printf("%p\n%p", &A, &A[0]);
+
+#+end_src
+
+#+RESULTS:
+: 0x7ffd70964e80
+: 0x7ffd70964e80
+
+
+* Lecture 2: Arrays as Data Structures
+
+#+begin_src bash
+echo "10 9 8 7 6 5 4 3 2 1" > rev
+cat rev
+#+end_src
+
+#+RESULTS:
+: 10 9 8 7 6 5 4 3 2 1
+
+#+begin_src C :tangle reverse.c :cmdline < rev
+  /***********************************************/
+  // reverse.c: reverse a series of numbers entered by the user
+  // Store numbers as integer array with scanf in a for loop
+  // Print numbers in reverse order with printf in a for loop
+  // (C) Cristian Del Gobbo Licence: GPLv3
+  /***********************************************/
+
+  #include <stdio.h>
+  #define SIZE 10
+  
+int A[SIZE];
+
+printf("Enter %d numbers:\n", SIZE);
+for(int i = 0; i<SIZE; i++){
+scanf("%d", &A[i]);
+}
+
+printf("In reverse order: ");
+for(int j = SIZE - 1; j>=0; j--){
+printf("%3d", A[j]);
+
+}
+
+
+#+end_src
+
+#+RESULTS:
+: Enter 10 numbers:
+: In reverse order:   1  2  3  4  5  6  7  8  9 10
