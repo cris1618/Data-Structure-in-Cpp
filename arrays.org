@@ -131,18 +131,18 @@ cat rev
   #include <stdio.h>
   #define SIZE 10
   
-int A[SIZE];
+  int A[SIZE];
 
-printf("Enter %d numbers:\n", SIZE);
-for(int i = 0; i<SIZE; i++){
-scanf("%d", &A[i]);
-}
+  printf("Enter %d numbers:\n", SIZE);
+  for(int i = 0; i<SIZE; i++){
+    scanf("%d", &A[i]);
+   }
 
-printf("In reverse order: ");
-for(int j = SIZE - 1; j>=0; j--){
-printf("%3d", A[j]);
+  printf("In reverse order: ");
+  for(int j = SIZE - 1; j>=0; j--){
+    printf("%3d", A[j]);
 
-}
+   }
 
 
 #+end_src
