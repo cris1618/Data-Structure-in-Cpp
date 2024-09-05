@@ -1,0 +1,94 @@
+#+TITLE: Simple Array Operations
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Simple Array Operations
+** Description
+The problem asks to read 5 integers from the user, display all the 
+numbers, calculate their sum, and implement a search function to 
+check if a user-inputted number exists in the array.
+
+To tackle this, I first created a loop to take 5 integers from 
+the user and store them in an array I had previously initialized. 
+Next, I used another loop to display the numbers entered by the user 
+and simultaneously calculate their sum. After that, I prompted the 
+user to enter another number, which I checked against the array using 
+a loop. To count the occurrences of this number in the array, I initialized 
+a variable =count=. If the count was greater than 0 after the loop, the 
+program would display a message indicating that the number was found and 
+how many times it appeared. Otherwise, it would print a message stating 
+that the number was not found in the array.
+
+** Code 
+#+begin_src bash :results output
+  echo "4 -3 100 -1 1" > simparr
+  echo "100" >> simparr
+  cat simparr
+#+end_src
+
+#+RESULTS:
+: 4 -3 100 -1 1
+: 100
+
+#+begin_src C :tangle simparr.c :cmdline < simparr
+  // Define the max size of the array
+  #define SIZE 5
+
+  // Initialize the array
+  int A[SIZE];
+
+  printf("Array elements entered: ");
+  for(int i = 0; i<SIZE; i++){
+    // Read input from the user
+    scanf("%d", &A[i]);
+   }
+
+  int sum = 0;
+  for(int i = 0; i<SIZE; i++){
+    // Display the numbers entered by the user
+    printf("%4d", A[i]);
+
+    // Calculate the sum of the elements in the array
+    sum += A[i];
+   }
+
+  // Display the sum 
+  printf("\nSum of array elements: %d.\n", sum);
+
+  int search_num;
+
+  printf("Which number should i search for?\n");
+
+  // Read the number to search from the user
+  scanf("%d", &search_num);
+
+  // Introduce a variable to count 
+  int count = 0;
+
+  // Searching loop
+  for(int i = 0; i<SIZE; i++){
+    if(A[i] == search_num){
+      count += 1;
+    }
+   } 
+
+  // If some element of the array was equal to the number we were searching for,
+  // and so count is greater than 0, print the number and the count
+  if(count > 0){
+    printf("%d was found in array (%d time(s)).", search_num, count);
+   }else{
+    printf("%d was not found in array.", search_num);
+   }
+
+   #+end_src
+
+   #+RESULTS:
+   : Array elements entered:    4  -3 100  -1   1
+   : Sum of array elements: 101.
+   : Which number should i search for?
+   : 100 was found in array (1 time(s)).
+
+** Reflection
+It was a fun and straightforward exercise if you know the basics of C.

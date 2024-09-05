@@ -1,0 +1,142 @@
+#+TITLE: Array Temperature Analysis
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Array Temperature Analysis
+** Description
+The task requires reading 7 temperature values from the user, displaying 
+the values, calculating the maximum, minimum, and average temperatures, 
+and performing additional operations like counting how many days had 
+temperatures above the average. Finally, the program modifies the original 
+temperature values and displays them.
+
+To approach this, I first created a loop to prompt the user for temperature 
+values and store them in a pre-initialized array. Then, I wrote functions to 
+compute the minimum, maximum, and average temperatures from the array.
+Once the average is computed, I created a loop to count how many days had 
+temperatures higher than the average and displayed that count. Lastly, I printed 
+modified temperatures for each day, where each temperature was increased by 2 degrees.
+
+** Code
+   #+begin_src bash 
+     echo "82.3 79.5 79.9 84.1 86.2 70.3 77.7" > tempp
+    cat tempp
+   #+end_src
+
+   #+RESULTS:
+   : 82.3 79.5 79.9 84.1 86.2 70.3 77.7
+
+   #+begin_src C :tangle temp.c :cmdline < tempp :results output
+     #include <stdio.h>
+     #define SIZE 7
+
+     // Create a function to find the max value in a float array
+     float max_temp(float a[SIZE]){
+       float max_temperature = a[0];
+       for(int i = 0; i<SIZE; i++){
+         if(a[i] > max_temperature){
+           max_temperature = a[i];
+
+         }
+       }
+       return max_temperature;
+     }
+
+     // Function to find the minimum
+     float min_temp(float a[SIZE]){
+       float min_temperature = a[0];
+       for(int i = 0; i<SIZE; i++){
+         if(a[i] < min_temperature){
+           min_temperature = a[i];
+         }
+       }
+       return min_temperature;
+     }
+
+     // Function to find the mean of an array
+     float avg_arr(float a[SIZE]){
+       float sum = 0;
+       for(int i = 0; i<SIZE; i++){
+         sum += a[i];
+       }
+       float mean = sum/SIZE;
+       return mean;
+     }
+
+     int main(){
+       float A[SIZE];
+       float min_temperature, max_temperature, mean;
+
+       // For loop to read and display the input
+       for (int i = 0; i < SIZE; i++) {
+         printf("Enter temperatures for day %d: ", i +1);
+         scanf("%f", &A[i]);  
+         printf("%.1f\n", A[i]);
+       }
+       // Space in the output between the different lines
+       printf("\n");
+
+       // Display the lowest temperature
+       min_temperature = min_temp(A);
+       printf("Lowest temperature = %.1f\n", min_temperature);
+
+       // Display the highest temperature
+       max_temperature = max_temp(A);
+       printf("Highest temperature = %.1f\n", max_temperature);
+
+       // Display the average temperature
+       mean = avg_arr(A);
+       printf("Average temperature = %.1f\n", mean);
+
+       // Days above average
+       int count = 0;
+       for(int i = 0; i<SIZE; i++){
+         if(A[i] > mean){
+           count += 1;
+         }
+       }
+       printf("Days above average temperature = %d\n", count);
+       printf("\n");
+
+       printf("Modified temperatures Mon-Sun: \n");
+       // Display modified temperatures
+       for(int i = 0; i<SIZE; i++){
+         printf("Modified temperature for day %d: %.1f\n", i+1, A[i] + 2);
+       }
+
+       return 0;
+     }
+   #+end_src
+
+   #+RESULTS:
+   #+begin_example
+   Enter temperatures for day 1: 82.3
+   Enter temperatures for day 2: 79.5
+   Enter temperatures for day 3: 79.9
+   Enter temperatures for day 4: 84.1
+   Enter temperatures for day 5: 86.2
+   Enter temperatures for day 6: 70.3
+   Enter temperatures for day 7: 77.7
+
+   Lowest temperature = 70.3
+   Highest temperature = 86.2
+   Average temperature = 80.0
+   Days above average temperature = 3
+
+   Modified temperatures Mon-Sun: 
+   Modified temperature for day 1: 84.3
+   Modified temperature for day 2: 81.5
+   Modified temperature for day 3: 81.9
+   Modified temperature for day 4: 86.1
+   Modified temperature for day 5: 88.2
+   Modified temperature for day 6: 72.3
+   Modified temperature for day 7: 79.7
+   #+end_example
+
+** Reflection
+Instead of doing everything in the =main= function, I wanted to create different functions 
+to compute the max, min, and average. This approach allows for better reusability. 
+Overall, it was fun, very different from Python, where you can just call 
+the function =max=, for instance.
