@@ -4,7 +4,6 @@
 #+STARTUP: overview hideblocks indent
 #+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
 
-* Simple Array Operations
 ** Description
 The problem asks to read 5 integers from the user, display all the 
 numbers, calculate their sum, and implement a search function to 

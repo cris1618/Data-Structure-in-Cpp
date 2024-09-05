@@ -4,7 +4,7 @@
 #+STARTUP: overview hideblocks indent
 #+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
 
-* Array Temperature Analysis
+
 ** Description
 The task requires reading 7 temperature values from the user, displaying 
 the values, calculating the maximum, minimum, and average temperatures, 
