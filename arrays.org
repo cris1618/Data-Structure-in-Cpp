@@ -133,12 +133,16 @@ cat rev
   
   int A[SIZE];
 
-  printf("Enter %d numbers:\n", SIZE);
+  printf("Enter %d numbers: ", SIZE);
   for(int i = 0; i<SIZE; i++){
     scanf("%d", &A[i]);
    }
 
-  printf("In reverse order: ");
+  for(int i = 0; i<SIZE; i++){
+    printf("%3d", A[i]);
+   }
+
+  printf("\nIn reverse order: ");
   for(int j = SIZE - 1; j>=0; j--){
     printf("%3d", A[j]);
 
@@ -148,5 +152,120 @@ cat rev
 #+end_src
 
 #+RESULTS:
-: Enter 10 numbers:
+: Enter 10 numbers:  10  9  8  7  6  5  4  3  2  1
 : In reverse order:   1  2  3  4  5  6  7  8  9 10
+
+* Lecture 3: Variable-Length arrays
+#+begin_src bash
+echo "5 1 2 3 4 5" > vla
+cat vla
+
+#+end_src
+
+#+RESULTS:
+: 5 1 2 3 4 5
+
+#+begin_src C :tangle vla.c :cmdline < vla
+  // Reverse program with VLAs
+  int i, n;
+
+
+  printf("How many numbers do you want to reverese?"); 
+  scanf("%d", &n);
+  printf("\nOK, %d numbers. \n", n);
+
+  int a[n]; // VLA definition cannot be initialized
+
+
+  for(i = 0; i<n; i++){
+    scanf("%d", &a[i]);
+    printf("%3d", a[i]);
+   }
+
+  printf("\n");
+  // Reverse
+  for(i = n-1; i>=0; i--){
+    printf("%3d", a[i]);
+   }
+#+end_src
+
+#+RESULTS:
+: How many numbers do you want to reverese?
+: OK, 5 numbers. 
+:   1  2  3  4  5
+:   5  4  3  2  1
+
+- Testing suite (Shell code block):
+#+begin_src bash :results output
+  gcc vla.c -o vla
+  echo 5 30 40 50 60 70 | ./vla
+#+end_src
+
+#+RESULTS:
+: How many numbers do you want to reverese?
+: OK, 5 numbers. 
+:  30 40 50 60 70
+
+** Length of an array
+#+begin_src C 
+  #include <stdio.h>
+  #define N 10
+  #define SIZE (int)(sizeof(a)/sizeof(a[0]))
+
+  int main(){
+    int i, a[N];
+    printf("SIZE = %d\n", SIZE);
+
+    for(i=0; i<SIZE; i++){
+      a[i] = i*i;
+      printf("%d ", a[i]);
+    }
+
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: SIZE = 10
+: 0 1 4 9 16 25 36 49 64 81
+
+** Parameter macros 
+#+begin_src C 
+  #define MAX(x,y) ((x) > (y) ? (x) : (y))
+
+  printf("Max value: %d\n", MAX(200, 100));
+
+#+end_src
+
+#+RESULTS:
+: Max value: 200
+
+- Here, "x > y ? x : y" is short version of:
+#+begin_example C
+if(x>y)
+x 
+else 
+y
+#+end_example
+
+#+begin_src C
+#define IS_EVEN(x) ((x)% 2 == 0)
+
+printf(" Is 99 even?\n Answer: %d\n", IS_EVEN(99));
+
+#+end_src
+
+#+RESULTS:
+: Is 99 even?
+: Answer: 0
+
+- Example 3: Use macros to create aliases
+#+begin_src C
+#define PRINT_INT(n) printf("%d\n", n);
+
+int i = 100;
+PRINT_INT(i);
+#+end_src
+
+#+RESULTS:
+: 100
