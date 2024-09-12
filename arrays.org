@@ -109,12 +109,11 @@ printf("%p\n%p", &A, &A[0]);
 : 0x7ffd70964e80
 : 0x7ffd70964e80
 
-
 * Lecture 2: Arrays as Data Structures
 
 #+begin_src bash
-echo "10 9 8 7 6 5 4 3 2 1" > rev
-cat rev
+  echo "10 9 8 7 6 5 4 3 2 1" > rev
+  cat rev
 #+end_src
 
 #+RESULTS:
@@ -130,7 +129,7 @@ cat rev
 
   #include <stdio.h>
   #define SIZE 10
-  
+
   int A[SIZE];
 
   printf("Enter %d numbers: ", SIZE);
@@ -157,8 +156,8 @@ cat rev
 
 * Lecture 3: Variable-Length arrays
 #+begin_src bash
-echo "5 1 2 3 4 5" > vla
-cat vla
+  echo "5 1 2 3 4 5" > vla
+  cat vla
 
 #+end_src
 
@@ -249,9 +248,9 @@ y
 #+end_example
 
 #+begin_src C
-#define IS_EVEN(x) ((x)% 2 == 0)
+  #define IS_EVEN(x) ((x)% 2 == 0)
 
-printf(" Is 99 even?\n Answer: %d\n", IS_EVEN(99));
+  printf(" Is 99 even?\n Answer: %d\n", IS_EVEN(99));
 
 #+end_src
 
@@ -261,11 +260,88 @@ printf(" Is 99 even?\n Answer: %d\n", IS_EVEN(99));
 
 - Example 3: Use macros to create aliases
 #+begin_src C
-#define PRINT_INT(n) printf("%d\n", n);
+  #define PRINT_INT(n) printf("%d\n", n);
 
-int i = 100;
-PRINT_INT(i);
+  int i = 100;
+  PRINT_INT(i);
 #+end_src
 
 #+RESULTS:
 : 100
+* Lecture 4: Checking a Number for Repeated Digits
+- Problem: check if any of the digits in a number n appear more than once. After 
+the user enters a number, the program prints either =Repeated Digits=, or =No repeated Digits=.
+
+- Sample input and output:
+#+begin_example
+Enter a number: 28212
+Repeated digit.
+#+end_example
+
+- Algorithm:
+  
+  1) Use array =digit_seen= to keep track of which digits in [0,9]
+     were already seen. Initialize array to =false= because digits
+     were seen yet.
+
+     =digit_seen[4]= corresponds to digit 4 and holds in the value
+     =false= at the start or if it is not in =n=.
+
+  2) Loop over the digits of =n= (using modulo 10). Leave the loop 
+     if =digit= has already been seen: =digit_seen[digit]=true=. 
+     Otherwise, set =digit_seen[digit]=true= (for the next loop iteration).
+
+  3) If the loop was left then n>0 and we have =Repeated digit=.
+     Otehrwise we have =No repeated digit=.
+
+
+#+begin_src bash
+  echo "263790" > rep
+  cat rep
+
+#+end_src
+
+#+RESULTS:
+: 263790
+
+#+begin_src C :tangle rep.c :cmdline < rep
+  #include <stdbool.h>
+  #define SIZE 10
+
+  bool digit_seen[SIZE] = {false};
+  int n, digit;
+
+  printf("Enter an integer: ");
+  scanf("%d", &n);
+  printf("%d\n", n);
+
+  while (n>0){
+    digit = n%10;
+    if(digit_seen[digit]){
+      break;
+    }else{
+      digit_seen[digit] = true;
+    }
+    n = n / 10;
+   }
+
+  if(n>0){
+    printf("Repeated Digit.");
+   }else{
+    printf("No Repeated Digit.");
+   }
+
+#+end_src
+
+#+RESULTS:
+: Enter an integer: 263790
+: No Repeated Digit.
+
+#+begin_src bash
+gcc rep.c -o rep
+echo 2290 | ./rep
+
+#+end_src
+
+#+RESULTS:
+: Repeated Digit.
