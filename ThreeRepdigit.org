@@ -1,0 +1,116 @@
+#+TITLE: Three Repdigit Program
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+** Show Which Digit were Repeated (Problem N.1)
+*** Problem Description
+- Problem: Check if any digits in the number =n= appear more than once, 
+  and print which digits (if any) are repeated.
+
+- Sample input and output:
+  #+begin_example
+  Enter an integer: 28212
+  Repeated Digit(s):  2
+  #+end_example
+
+- Algorithm:
+1) Use two boolean arrays, =digit_seen= and =digit_repeated=, to track digits [0,9].
+   Initialize both to =false= since no digits have been processed.
+   =digit_seen[digit]= marks if a digit has been encountered, while =digit_repeated[digit]= 
+   flags repeated digits.
+
+2) Loop over the input number. If =digit_seen[digit]= is =true=, 
+   set =digit_repeated[digit]= to true. Otherwise, mark =digit_seen[digit]= as true and continue.
+   Remove the last digit of =n= with =n/=10= and repeat.
+
+3) Check if any digit was repeated by iterating through =digit_repeated=.
+   Print the repeated digits, or =None= if none were found.
+
+*** Code
+#+begin_src bash
+  echo "-1111222222444444555" > srd
+  cat srd
+
+#+end_src
+
+#+RESULTS:
+: -1111222222444444555
+
+#+begin_src C :tangle srd.c :results output :cmdline < srd
+  /***********************************************/
+  // srd.c: show which digits were repeated
+  // (C) Cristian Del Gobbo Licence: GPLv3
+  /***********************************************/
+  #include <stdio.h>       
+  #include <stdbool.h>
+  #define SIZE 10
+
+  // Create boolean arrays to check seen and repeated digits
+  bool digit_seen[SIZE] = {false};
+  bool digit_repeated[SIZE] = {false};
+
+  // Use long long for very large input numbers
+  long long n, digit;
+  int index = 0;
+
+  // Read the input from the user
+  printf("Enter an integer: ");
+  scanf("%lld", &n);
+  printf("%lld\n", n);
+
+  // Handle negative input values
+  if(n<0){
+    n = n * -1;
+   }
+
+  // Iterate over the input number
+  while (n>0){
+    digit = n%10;
+    if(digit_seen[digit]){
+      digit_repeated[digit] = true;
+    }else{
+      digit_seen[digit] = true;
+    }
+    n /= 10;
+   }
+
+
+  // Create a boolean variable to check if 
+  // a digit was repeated at least once
+  bool has_repeated = false;
+
+  // Print the repeated digits (if any)
+  printf("Repeated Digit(s): ");
+  for(int i=0; i<SIZE; i++){
+    if(digit_repeated[i] == true){
+      printf("%2d", i);
+      has_repeated = true;
+    }
+   }
+  if(!has_repeated){
+    printf("None");
+   }
+#+end_src
+
+    #+RESULTS:
+    : Enter an integer: -1111222222444444555
+    : Repeated Digit(s):  1 2 4 5
+
+    #+begin_src bash :results output
+      gcc srd.c -o srd
+      echo "-11111111111" | ./srd
+    #+end_src
+
+    #+RESULTS:
+    : Enter an integer: -11111111111
+    : Repeated Digit(s):  1
+
+*** Reflection
+Initially, I considered using an integer array to store the repeated digits, 
+and while this approach worked for smaller numbers, it proved inefficient and 
+less scalable for larger inputs. To improve efficiency, I opted for a second 
+boolean array, leveraging the modulo operator and the fact that there are only 
+10 possible digits (0-9). This solution is both more efficient and scalable, 
+as it requires only a fixed-size array of 10 elements.
