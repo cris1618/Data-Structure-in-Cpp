@@ -251,11 +251,15 @@ cat more
 : 687 8119 7299 -83
 
 #+begin_src C :tangle more.c :cmdline < more
+  /***********************************************/
+  // more.c: Let the user enter more than one number.
+  // (C) Cristian Del Gobbo Licence: GPLv3
+  /***********************************************/
   #include <stdbool.h>
   #define SIZE 10
 
   bool digit_seen[SIZE];
-  int n, digit;
+  long long n, digit;
 
   printf("Enter how many numbers you want: \n");
 
@@ -268,12 +272,12 @@ cat more
       digit_seen[i] = false;
     }
 
-    scanf("%d", &n);
+    scanf("%lld", &n);
     // If the input is <= to 0 exit the loop
     if(n<=0){
       break;
     }else{
-      printf("%d\n", n);
+      printf("%lld\n", n);
       while (n>0){
         digit = n%10;
         if(digit_seen[digit]){
