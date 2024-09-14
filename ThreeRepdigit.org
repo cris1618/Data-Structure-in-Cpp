@@ -6,16 +6,16 @@
 
 ** Show Which Digit were Repeated (Problem N.1)
 *** Problem Description
-- Problem: Check if any digits in the number =n= appear more than once, 
+- *Problem*: Check if any digits in the number =n= appear more than once, 
   and print which digits (if any) are repeated.
 
-- Sample input and output:
+- *Sample input and output*:
   #+begin_example
   Enter an integer: 28212
   Repeated Digit(s):  2
   #+end_example
 
-- Algorithm:
+- *Algorithm*:
 1) Use two boolean arrays, =digit_seen= and =digit_repeated=, to track digits [0,9].
    Initialize both to =false= since no digits have been processed.
    =digit_seen[digit]= marks if a digit has been encountered, while =digit_repeated[digit]= 
@@ -32,7 +32,6 @@
 #+begin_src bash
   echo "-1111222222444444555" > srd
   cat srd
-
 #+end_src
 
 #+RESULTS:
@@ -53,7 +52,6 @@
 
   // Use long long for very large input numbers
   long long n, digit;
-  int index = 0;
 
   // Read the input from the user
   printf("Enter an integer: ");
@@ -114,3 +112,197 @@ less scalable for larger inputs. To improve efficiency, I opted for a second
 boolean array, leveraging the modulo operator and the fact that there are only 
 10 possible digits (0-9). This solution is both more efficient and scalable, 
 as it requires only a fixed-size array of 10 elements.
+** Print table showing number of occurrences (Problem N.2)
+*** Problem Description
+- *Problem*: prints a table showing how many times each digit appears 
+  in the number =n= given by the user.
+
+- *Sample input and output*:
+  #+begin_example
+  Enter a number: 41271092
+  Digit:        0  1  2  3  4  5  6  7  8  9
+  Occurrences:  1  2  2  0  1  0  0  1  0  1
+  #+end_example
+
+- *Algorithm*:
+1) Create an array =digit_occ[10]= to track occurrences of digits 0-9.
+   Read integer =n= from the user. Convert to positive if =n= is negative.
+
+
+2) Loop through n by extracting each digit (=n % 10=), increment its count in =digit_occ=, 
+   then divide =n= by 10.
+
+3) Print the digits (0-9) and their respective occurrences from =digit_occ=.
+
+*** Code
+#+begin_src bash
+  echo "-41271092729292" > table
+  cat table
+#+end_src
+
+#+RESULTS:
+: -41271092729292
+
+#+begin_src C :tangle table.c :cmdline < table
+  /***********************************************/
+  // table.c: show a table of accurrences per digit
+  // (C) Cristian Del Gobbo Licence: GPLv3
+  /***********************************************/
+  #include <stdio.h>   
+  #define SIZE 10
+
+  // Create an iteger array to store the occurrences
+  int digit_occ[SIZE] = {0};
+
+  // Use long long for very large input numbers
+  long long n, digit;
+  
+
+  // Read the input from the user
+  printf("Enter an integer: ");
+  scanf("%lld", &n);
+  printf("%lld\n", n);
+
+  // Handle negative input values
+  if(n<0){
+    n = n * -1;
+   }
+
+  // Iterate over the input number
+  while (n>0){
+    digit = n%10;
+    digit_occ[digit] += 1;
+    n /= 10;
+   }
+
+  // Print the digits
+  printf("Digits:      ");
+  for(int i = 0; i<SIZE; i++){
+    printf("%3d", i);
+   }
+
+  // Print occurrences for each digit
+  printf("\nOccurrences: ");
+  for(int i = 0; i<SIZE; i++){
+      printf("%3d", digit_occ[i]);
+   }
+
+#+end_src 
+
+#+RESULTS:
+: Enter an integer: -41271092729292
+: Digits:        0  1  2  3  4  5  6  7  8  9
+: Occurrences:   1  2  5  0  1  0  0  2  0  3
+
+
+#+begin_src bash :results output
+gcc table.c -o table
+echo "-41271092729292" | ./table
+#+end_src
+
+#+RESULTS:
+: Enter an integer: -41271092729292
+: Digits:        0  1  2  3  4  5  6  7  8  9
+: Occurrences:   1  2  5  0  1  0  0  2  0  3
+
+*** Reflection
+I found the second problem easier than the first, as counting the occurrences 
+is straightforward using a simple loop, without the need for boolean arrays.
+** Let user enter more than one number (Bonus)
+*** Problem Description
+- *Problem*: Modify the =repdigit.c= program , which checked a number for repeated 
+  digits so that the user can enter more than one number to be tested for repeated digits. 
+  The program should terminate when the user enters a number that's less than or equal to 0.
+
+- *Sample input and output*:
+#+begin_example
+Inputs: 687 8119 7299 -83
+Output:
+Enter how many numbers you want: 
+: 687
+: No Repeated Digit(s).
+: 8119
+: Has Repeated Digit(s).
+: 7299
+: Has Repeated Digit(s).
+#+end_example
+
+- *Algorithm*:
+1) Use the array =digit_seen= to keep track of which digits in [0,9] have already been seen.
+
+2) Create an infinite loop to continuously prompt for a number. If the input is less than or 
+   equal to 0, break the loop and exit. Always reset all elements of =digit_seen= at the   
+   beginning of each iteration.
+
+3) Loop over the digits of n (using modulo 10). Exit the loop if digit has already been seen: 
+   =digit_seen[digit] == true=. Otherwise, set =digit_seen[digit] = true= for the next iteration.
+
+4) If the loop exits early (=n > 0=), print "Repeated digit(s)". Otherwise, print "No repeated digit(s)".
+
+5) Prompt the user to insert another number and repeat the process until the user enters a number <= 0.
+
+*** Code
+#+begin_src bash
+echo "687 8119 7299 -83" > more
+cat more 
+#+end_src
+
+#+RESULTS:
+: 687 8119 7299 -83
+
+#+begin_src C :tangle more.c :cmdline < more
+  #include <stdbool.h>
+  #define SIZE 10
+
+  bool digit_seen[SIZE];
+  int n, digit;
+
+  printf("Enter how many numbers you want: \n");
+
+  // Infinite loop that allow the user to enter more than one input
+  // The loop breaks when the user enter a number less or equal to 0
+  while(1){
+
+    // Reset the digit_seen array for each new input
+    for (int i = 0; i < SIZE; i++) {
+      digit_seen[i] = false;
+    }
+
+    scanf("%d", &n);
+    // If the input is <= to 0 exit the loop
+    if(n<=0){
+      break;
+    }else{
+      printf("%d\n", n);
+      while (n>0){
+        digit = n%10;
+        if(digit_seen[digit]){
+          break;
+        }else{
+          digit_seen[digit] = true;
+        }
+        n /= 10;
+      }
+
+      // Print the result
+      if(n>0){
+        printf("Has Repeated Digit(s).\n");
+      }else{
+        printf("No Repeated Digit(s).\n");
+      }
+    }
+   }
+#+end_src
+
+#+RESULTS:
+: Enter how many numbers you want: 
+: 687
+: No Repeated Digit(s).
+: 8119
+: Has Repeated Digit(s).
+: 7299
+: Has Repeated Digit(s).
+
+*** Reflection
+I took a few minutes to reflect on the problem and realized that using an infinite loop (=while(1)=) 
+would be a simple solution. From there, I only needed to make a few minor adjustments to the original code.
