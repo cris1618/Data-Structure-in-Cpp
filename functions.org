@@ -1,0 +1,123 @@
+#+TITLE: Functions
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+** Function prototypes & arguments vs. parameters
+*** Warmup program
+   #+begin_src C :results output
+     #define SIZE 6
+     float a[SIZE] = {1.0, 3.0, 2.5, 3.0, 4.0, 3.0};
+     int count = 0;
+     printf("Reverse order: ");
+     for(int i = SIZE -1; i>=0; i--){
+       if(a[i] == 3.0){
+	 count += 1;
+       }
+       printf("%g ", a[i]);
+      }
+
+     printf("\nCount: %d", count);
+   #+end_src
+
+   #+RESULTS:
+   : Reverse order: 3 4 3 2.5 3 1 
+   : Count: 3
+
+*** Functions prototypes
+    #+begin_src C :results output :main no
+      // Function prototype
+      int add(int, int);
+
+      int add(int a, int b){
+	return a+b;
+      }
+
+      int main(void){
+	int x = 1, y = 748;
+
+	int addition = add(x, y);
+	printf("Addition: %d", addition);
+      }
+
+    #+end_src
+
+    #+RESULTS:
+    : Addition: 749
+
+    #+begin_src C :results output :main no
+      // Hello world prototype
+      void hello(void);
+      
+      // Print hello world with a function
+      void hello(){
+	puts("Hello, World!");
+      }
+
+
+      int main(){
+	hello();
+	return 0;
+      }
+    #+end_src
+
+#+RESULTS:
+: Hello, World!
+
+#+begin_src C
+  // Broken version
+  // Hello world prototype
+  void hello(void);
+      
+  // Print hello world with a function (Wrong data Type)
+  int hello(){
+    puts("Hello, World!");
+  }
+
+  /*  int main(){
+      hello();
+      return 0;
+      }
+  */
+
+  // Arguments error
+  int hello(int a){
+    puts("Hello, World!");
+  }
+
+  //Function call error
+  int main(){
+    int a = 0;
+    hello(a);
+    return 0;
+  }
+
+
+#+end_src
+
+#+RESULTS:
+
+*** Function Documentation
+    #+begin_src C
+      /**************************************************
+       // Function: hello_world
+       // Purpose: Prints "Hello, World!" to the console.
+       // Returns: Void (no return value)
+       // Parameters: void (no parameters)
+       ,***************************************************/ 
+    #+end_src
+
+    #+begin_src C
+      // Power function
+      int power(int x, int n){
+	int i, result = 1;
+	for(i=1; i<=n; i++){
+	  result = result * x;
+	}
+	return result;
+      }
+    
+    #+end_src
+
+    #+RESULTS:
