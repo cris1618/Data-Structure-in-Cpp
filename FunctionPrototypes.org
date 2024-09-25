@@ -1,0 +1,58 @@
+#+TITLE: Function Prototypes
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Problem Description 
+* Code 
+  #+begin_src C :main no :results output
+    // Function Prototype Reverse
+    void reverse(float a[], int size);
+
+    // Function Prototype Count
+    int count(float a[], int n, int size);
+
+    /***************************************************************
+     // Function: reverse
+     // Purpose: Prints a float array in reverse order.
+     // Returns: Void (no return value)
+     // Parameters: float array (a[]), int size (Size of the array)
+     ***************************************************************/
+    void reverse(float a[], int size){
+      printf("Array Reversed: ");
+      for(int i = size - 1; i>=0; i--){
+	printf("%g ", a[i]);
+      }
+    }
+
+    /***************************************************************
+     // Function: count
+     // Purpose: counts the number of times a number occurs in an array.
+     // Returns: returns an integer count, number of time the number 
+                 appear in the array.
+     // Parameters: float array (a[]), int n (number to check in the array)
+                    int size (Size of the array)
+     ***************************************************************/
+    int count(float a[], int n, int size){
+      int count = 0;
+      for(int i = 0; i<size; i++){
+	if(a[i] == n){
+	  count++;
+	}
+      }
+      return count;
+    }
+
+    int main(){
+      float a[6] = {1,3,2.5,3,4,3};
+      reverse(a, 6);
+      printf("\nCount of %g: %d", a[1], count(a, 3, 6));
+    }
+  #+end_src
+
+  #+RESULTS:
+  : Array Reversed: 3 4 3 2.5 3 1 
+  : Count of 3: 3
+
+* Reflection
