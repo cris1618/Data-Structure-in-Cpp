@@ -6,61 +6,61 @@
 
 ** Function prototypes & arguments vs. parameters
 *** Warmup program
-   #+begin_src C :results output
-     #define SIZE 6
-     float a[SIZE] = {1.0, 3.0, 2.5, 3.0, 4.0, 3.0};
-     int count = 0;
-     printf("Reverse order: ");
-     for(int i = SIZE -1; i>=0; i--){
-       if(a[i] == 3.0){
-	 count += 1;
-       }
-       printf("%g ", a[i]);
-      }
+#+begin_src C :results output
+  #define SIZE 6
+  float a[SIZE] = {1.0, 3.0, 2.5, 3.0, 4.0, 3.0};
+  int count = 0;
+  printf("Reverse order: ");
+  for(int i = SIZE -1; i>=0; i--){
+    if(a[i] == 3.0){
+      count += 1;
+    }
+    printf("%g ", a[i]);
+   }
 
-     printf("\nCount: %d", count);
-   #+end_src
+  printf("\nCount: %d", count);
+#+end_src
 
-   #+RESULTS:
-   : Reverse order: 3 4 3 2.5 3 1 
-   : Count: 3
+#+RESULTS:
+: Reverse order: 3 4 3 2.5 3 1 
+: Count: 3
 
 *** Functions prototypes
-    #+begin_src C :results output :main no
-      // Function prototype
-      int add(int, int);
+#+begin_src C :results output :main no
+  // Function prototype
+  int add(int, int);
 
-      int add(int a, int b){
-	return a+b;
-      }
+  int add(int a, int b){
+    return a+b;
+  }
 
-      int main(void){
-	int x = 1, y = 748;
+  int main(void){
+    int x = 1, y = 748;
 
-	int addition = add(x, y);
-	printf("Addition: %d", addition);
-      }
+    int addition = add(x, y);
+    printf("Addition: %d", addition);
+  }
 
-    #+end_src
+#+end_src
 
-    #+RESULTS:
-    : Addition: 749
+#+RESULTS:
+: Addition: 749
 
-    #+begin_src C :results output :main no
-      // Hello world prototype
-      void hello(void);
-      
-      // Print hello world with a function
-      void hello(){
-	puts("Hello, World!");
-      }
+#+begin_src C :results output :main no
+  // Hello world prototype
+  void hello(void);
+
+  // Print hello world with a function
+  void hello(){
+    puts("Hello, World!");
+  }
 
 
-      int main(){
-	hello();
-	return 0;
-      }
-    #+end_src
+  int main(){
+    hello();
+    return 0;
+  }
+#+end_src
 
 #+RESULTS:
 : Hello, World!
@@ -69,7 +69,7 @@
   // Broken version
   // Hello world prototype
   void hello(void);
-      
+
   // Print hello world with a function (Wrong data Type)
   int hello(){
     puts("Hello, World!");
@@ -79,7 +79,7 @@
       hello();
       return 0;
       }
-  */
+  ,*/
 
   // Arguments error
   int hello(int a){
@@ -99,25 +99,61 @@
 #+RESULTS:
 
 *** Function Documentation
-    #+begin_src C
-      /**************************************************
-       // Function: hello_world
-       // Purpose: Prints "Hello, World!" to the console.
-       // Returns: Void (no return value)
-       // Parameters: void (no parameters)
-       ,***************************************************/ 
-    #+end_src
+#+begin_src C
+  /**************************************************
+   // Function: hello_world
+   // Purpose: Prints "Hello, World!" to the console.
+   // Returns: Void (no return value)
+   // Parameters: void (no parameters)
+   ,***************************************************/ 
+#+end_src
 
-    #+begin_src C
-      // Power function
-      int power(int x, int n){
-	int i, result = 1;
-	for(i=1; i<=n; i++){
-	  result = result * x;
-	}
-	return result;
-      }
-    
-    #+end_src
+#+begin_src C
+  // Power function
+  int power(int x, int n){
+    int i, result = 1;
+    for(i=1; i<=n; i++){
+      result = result * x;
+    }
+    return result;
+  }
 
-    #+RESULTS:
+#+end_src
+
+#+RESULTS:
+** Recursive Fibonacci and factorial
+#+begin_src C :results output 
+  int factorial(int n){
+    if(n==0)
+      return 1;
+    else 
+      n = n * factorial(n-1);
+    return n;
+  }
+
+  int fibonacci(int x){
+    if(x == 0){
+      return 0;
+    }else if(x == 1){
+      return 1;
+    }else {
+      return (fibonacci(x-1) + fibonacci(x-2));
+    }
+  }
+
+
+  int main(){
+    int n = 5;
+    int x = 5;
+
+    printf("The factorial of %d is: %d\n", n, factorial(n));
+    printf("Fibonacci Sequence: ");
+    for(int i = 0; i<x; i++)
+      printf("%d ", fibonacci(i));
+  }
+
+#+end_src
+
+#+RESULTS:
+: The factorial of 5 is: 120
+: Fibonacci Sequence: 0 1 1 2 3
