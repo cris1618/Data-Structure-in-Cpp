@@ -5,54 +5,157 @@
 #+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
 
 * Problem Description 
+Create two functions to work with an array of 
+floating-point numbers:
+
+- =reverse=: This function will print the elements 
+  of an array in reverse order.
+
+- =count=: This function will count how many times 
+  a specific number appears in the array.
+
+*Approach*:
+For the =reverse= function, iterate over the array 
+starting from the last element and work backwards 
+to the first element. Print each element as you loop.
+
+For the =count= function, iterate over the array and 
+use a conditional statement to compare each element with 
+the target number. If they match, increment the count. 
+
+No advanced algorithms are required for this problem, the solution 
+involves simple iteration and conditional checks within a =for= loop.
+
 * Code 
-  #+begin_src C :main no :results output
-    // Function Prototype Reverse
-    void reverse(float a[], int size);
+#+begin_src C :main no :results output
+  // Function Prototypes
+  /***************************************************************
+   // Function: reverse
+   // Purpose:  Prints a float array in reverse order.
+   // Returns:  Void (no return value)
+   // Parameters:
+   //   a[]  = Float array
+   //   size = Size of the array
+   ,***************************************************************/
+  void reverse(float a[], int size);
 
-    // Function Prototype Count
-    int count(float a[], int n, int size);
+  /***************************************************************
+   // Function: count
+   // Purpose:  Counts the number of times a number occurs in an array.
+   // Returns:  Integer (count of how many times the number appears)
+   // Parameters:
+   //   a[]  - Float array
+   //   n    - Number to check in the array
+   //   size - Size of the array
+   ,**************************************************************/
+  int count(float a[], int n, int size);
 
-    /***************************************************************
-     // Function: reverse
-     // Purpose: Prints a float array in reverse order.
-     // Returns: Void (no return value)
-     // Parameters: float array (a[]), int size (Size of the array)
-     ***************************************************************/
-    void reverse(float a[], int size){
-      printf("Array Reversed: ");
-      for(int i = size - 1; i>=0; i--){
-	printf("%g ", a[i]);
+  // Functions declarations
+  void reverse(float a[], int size){
+    printf("Array Reversed: ");
+    for(int i = size - 1; i>=0; i--){
+      printf("%g ", a[i]); // Print in reverse order
+    }
+    printf("\n");
+  }
+
+
+  int count(float a[], int n, int size){
+    int count = 0;
+    for(int i = 0; i<size; i++){
+      if(a[i] == n){
+        count++; // Increase the count
       }
     }
+    return count;
+  }
 
-    /***************************************************************
-     // Function: count
-     // Purpose: counts the number of times a number occurs in an array.
-     // Returns: returns an integer count, number of time the number 
-                 appear in the array.
-     // Parameters: float array (a[]), int n (number to check in the array)
-                    int size (Size of the array)
-     ***************************************************************/
-    int count(float a[], int n, int size){
-      int count = 0;
-      for(int i = 0; i<size; i++){
-	if(a[i] == n){
-	  count++;
-	}
+  int main(){
+    float a[6] = {1,3,2.5,3,4,3};
+    int search = 3;
+    // Call the functions 'reverse' and 'count'
+    reverse(a, 6);
+    printf("Count of %d: %d", search, count(a, search, 6));
+  }
+    #+end_src
+
+#+RESULTS:
+: Array Reversed: 3 4 3 2.5 3 1 
+: Count of 3: 3
+
+*** Generalized code for user inpusts
+#+begin_src C :main no :tangle gci.c
+  // Functions declarations
+  void reverse(float a[], int size){
+    printf("Array Reversed: ");
+    for(int i = size - 1; i>=0; i--){
+      printf("%g ", a[i]); // Print in reverse order
+    }
+    printf("\n");
+  }
+
+
+  int count(float a[], int n, int size){
+    int count = 0;
+    for(int i = 0; i<size; i++){
+      if(a[i] == n){
+        count++; // Increase the count
       }
-      return count;
+    }
+    return count;
+  }
+
+  int main(){
+    // Size imputed by the user
+    long long  n;
+    // Array elements
+    float u;
+
+    puts("What's the size of the array?");
+    scanf("%lld", &n);
+    float a[n];
+
+    // Ask the user for the elements of the array
+    printf("Please type %lld floats: \n", n);
+    for(int i = 0; i<n; i++){
+      scanf("%g", &u);
+      a[i] = u;
     }
 
-    int main(){
-      float a[6] = {1,3,2.5,3,4,3};
-      reverse(a, 6);
-      printf("\nCount of %g: %d", a[1], count(a, 3, 6));
-    }
-  #+end_src
 
-  #+RESULTS:
-  : Array Reversed: 3 4 3 2.5 3 1 
-  : Count of 3: 3
+    // Call the functions 'reverse' and 'count'
+    reverse(a, n);
+
+    // Number to search in the array (integer)
+    int search;
+    puts("What are you looking for?");
+    scanf("%d", &search);
+    printf("Count of %d: %d", search, count(a, search, n));
+  }
+#+end_src
+
+
+#+begin_src bash :results output
+gcc gci.c -o gci
+echo "5 2.0 3.0 7 9.7 0 3" |./gci
+
+#+end_src
+
+#+RESULTS:
+: What's the size of the array?
+: Please type 5 floats: 
+: Array Reversed: 0 9.7 7 3 2 
+: What are you looking for?
+: Count of 3: 1
 
 * Reflection
+I initially wanted to generalize the functions by calculating the size of 
+the array directly within the functions instead of passing it as a parameter. 
+However, I realized that the array argument in C is actually a pointer to the 
+first element, so using something like =sizeof(a)/sizeof(a[0]=) won't work inside 
+the function. A potential solution is to define a =struct= that contains both the 
+elements of the array and its size, then pass this =struct= as an argument to the 
+functions.
+
+I also aimed to create a more flexible function that accepts user inputs. You can 
+find this under the *Generalized code for user inputs* subsection of the *Code* section.
