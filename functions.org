@@ -108,8 +108,19 @@
    ,***************************************************/ 
 #+end_src
 
-#+begin_src C
-  // Power function
+#+begin_src C :main no
+  // Function Prototypes
+  int power(int, int);
+  int pwer2(int, int);
+
+
+  int main(){
+    int a = 2, b = 3;
+    printf("%d at the power of %d is: %d\n",a, b, power(a, b));
+    printf("%d at the power of %d is: %d",a, b, power2(a, b));
+    return 0;
+  }
+
   int power(int x, int n){
     int i, result = 1;
     for(i=1; i<=n; i++){
@@ -118,10 +129,30 @@
     return result;
   }
 
+  int power2(int x, int n){
+    int result = 1;
+    while(n-- > 0)
+      result = result * x;
+    return result;
+  }
+
 #+end_src
 
 #+RESULTS:
+: 2 at the power of 3 is: 8
+: 2 at the power of 3 is: 8
+
+#+begin_src C :tangle power2.c :main no
+  int power2(int x, int n){
+    int result = 1;
+    while(n-- > 0)
+      result = result * x;
+    return result;
+  }
+#+end_src
+#+RESULTS:
 ** Recursive Fibonacci and factorial
+
 #+begin_src C :results output 
   int factorial(int n){
     if(n==0)
@@ -157,3 +188,80 @@
 #+RESULTS:
 : The factorial of 5 is: 120
 : Fibonacci Sequence: 0 1 1 2 3
+** Pass arguments as reference (1d Arrays)
+#+begin_src bash
+echo 5 > sum_array
+cat sum_array 
+#+end_src
+
+#+RESULTS:
+: 5
+
+#+begin_src C :main no :cmdline < sum_array
+    int sum_array(int a[], int size){
+      int sum = 0;
+      for(int i = 0; i<size; i++)
+        sum += a[i];
+      return sum;
+    }
+
+    int main(){
+      int size;
+      scanf("%d", &size);
+      int a[size];
+    
+
+      for(int i = 0; i<size; i++){
+        a[i] = 1;
+      }
+
+      printf("Sum: %d", sum_array(a, size));
+      return 0;
+    }
+
+#+end_src
+
+#+RESULTS:
+: Sum: 5
+
+#+begin_src bash
+  echo "5 1 1 1 1 1"  > sum_array
+  cat sum_array 
+#+end_src
+
+#+RESULTS:
+: 5 1 1 1 1 1
+
+#+begin_src C :main no :cmdline < sum_array
+  void print_array(int [], int);
+
+  int main(){ 
+    int size;
+    int n;
+    scanf("%d", &size);
+    int a[size];
+
+    for(int i = 0; i<size; i++){
+      scanf("%d", &n);
+      a[i] = n;
+    }
+
+    print_array(a, size);
+    return 0;
+  }
+
+
+  void print_array(int a[], int size){
+    printf("Array elements: ");
+    for(int i = 0; i<size; i++){
+      printf("%d ", a[i]);
+    }
+  }
+
+
+
+
+#+end_src
+
+#+RESULTS:
+: Array elements: 1 1 1 1 1
