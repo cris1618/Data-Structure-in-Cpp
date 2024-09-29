@@ -1,0 +1,214 @@
+#+TITLE: Passing Arrays to Functions
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Problem Description
+*Problem*: Modify the program =print_array= developed in class to print 
+a one-dimensional array using a function. The new function =print_array2= 
+should print a two-dimensional array.
+
+*Approach*: 
+Define a function with a =void= return type that accepts a 2D integer array 
+as a parameter. The second dimension of the array should be fixed at size 3 
+(representing the number of columns), while the size of the first dimension 
+(representing the number of rows) is passed as an argument. Inside the function, 
+implement a nested for-loop to iterate over the rows and columns, printing the 
+values of the 2D array.
+
+* Code
+** Specific Solution (3x3 Matrices)
+#+begin_src C :main no :results output
+  #define LEN 3
+
+  // Function Prototype
+   // Function: print_array2
+   // Purpose:  Prints a 2D integer array.
+   // Returns:  Void (no return value)
+   // Parameters:
+   //   a[][LEN]  = 2D Integer Array
+   //   nrow = First dimension of the array (Number of rows)
+  void print_array2(int [][LEN], int);
+
+
+  int main(){
+    
+    int a[LEN][LEN];
+    int element = 1;
+
+    for(int i = 0; i<LEN; i++){
+      for(int j = 0; j<LEN; j++){
+        a[i][j] = element;
+        element+=1;
+      }
+    }
+    print_array2(a, LEN);
+    return 0;
+  }
+
+  // Function Declaration
+  void print_array2(int a[][LEN], int nrow){
+    puts("Array Elements: ");
+    for(int i = 0; i<nrow; i++){
+      for(int j = 0; j<LEN; j++){
+        printf("%d ", a[i][j]);
+      }
+      puts(" ");
+    }
+  }
+
+  #+end_src
+
+  #+RESULTS:
+  : Array Elements: 
+  : 1 2 3  
+  : 4 5 6  
+  : 7 8 9
+
+** General Solution (Nx3 Matrices)
+#+begin_src bash
+echo "3 1 2 3 4 5 6 7 8 9" > nrows
+cat nrows
+#+end_src
+
+#+RESULTS:
+: 3 1 2 3 4 5 6 7 8 9
+
+#+begin_src C :results output :cmdline < nrows :main no
+  #define LEN 3
+
+  // Function Prototype
+  // Function: print_array2
+  // Purpose:  Prints a 2D integer array.
+  // Returns:  Void (no return value)
+  // Parameters:
+  //   a[][LEN]  = 2D Integer Array
+  //   nrow = First dimension of the array (Number of rows)
+  void print_array2(int [][LEN], int);
+
+
+  int main(){
+    // User input for Number of Rows
+    int nrow;
+    puts("How many rows you want?");
+    scanf("%d", &nrow);
+    int a[nrow][LEN];
+    
+    // Array elements from the user
+    int elements;
+    
+    printf("Tell me %d numbers please\n", nrow*LEN);
+    for(int i = 0; i<nrow; i++){
+      for(int j = 0; j<LEN; j++){
+        scanf("%d", &elements);
+        a[i][j] = elements;
+      }
+    }
+    print_array2(a, nrow);
+    return 0;
+  }
+
+  // Function Declaration
+  void print_array2(int a[][LEN], int nrow){
+    puts("Array Elements: ");
+    for(int i = 0; i<nrow; i++){
+      for(int j = 0; j<LEN; j++){
+        printf("%d ", a[i][j]);
+      }
+      puts(" ");
+    }
+  }
+
+#+end_src
+
+#+RESULTS:
+: How many rows you want?
+: Tell me 9 numbers please
+: Array Elements: 
+: 1 2 3  
+: 4 5 6  
+: 7 8 9
+
+** 3D Arrays
+#+begin_src bash
+echo "2 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18" > 3d
+cat 3d
+#+end_src
+
+#+RESULTS:
+: 2 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18
+
+#+begin_src C :main no :results output :cmdline < 3d
+  #define LEN 3
+
+  // Function Prototype
+  // Function: print_array3D
+  // Purpose:  Prints a 3D integer array.
+  // Returns:  Void (no return value)
+  // Parameters:
+  //   a[][LEN][LEN]  = 3D Integer Array
+  //   nrow = First dimension of the array (Number of rows)
+  void print_array3D(int [][LEN][LEN], int);
+
+
+  int main(){
+    // User input for Number of Rows
+    int depth;
+    puts("Depth of the array: ");
+    scanf("%d", &depth);
+    int a[depth][LEN][LEN];
+    
+    // Array elements from the user
+    int elements;
+    
+    printf("Tell me %d numbers please\n", depth*LEN*LEN);
+    for(int i = 0; i<depth; i++){
+      for(int j = 0; j<LEN; j++){
+        for(int k = 0; k<LEN; k++){
+          scanf("%d", &elements);
+          a[i][j][k] = elements;
+        }
+      }
+    }
+    print_array3D(a, depth);
+    return 0;
+  }
+
+  // Function Declaration
+  void print_array3D(int a[][LEN][LEN], int depth){
+    puts("Array Elements: ");
+    for(int i = 0; i<depth; i++){
+      for(int j = 0; j<LEN; j++){
+        for(int k = 0; k<LEN; k++){
+          printf("%d ", a[i][j][k]);
+        }
+        puts(" ");
+      }
+      puts(" ");
+    }
+  }
+
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Depth of the array: 
+Tell me 18 numbers please
+Array Elements: 
+1 2 3  
+4 5 6  
+7 8 9  
+ 
+10 11 12  
+13 14 15  
+16 17 18
+#+end_example
+
+* Reflection
+The initial solution was trivial, but I was interested by how I could display a 3D array on a 2D screen. 
+So, I developed a program and the function =print_array3D=. The interesting part is that the first dimension 
+of the array now represents its =depth=. When printed, the array will display =n= 'layers of numbers' based on 
+the user's input. These 'layers' are indicated by the space between sets of numbers, as it’s not possible 
+to fully visualize a 3D array of numbers on a 2D screen. This was fun.
