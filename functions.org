@@ -265,3 +265,192 @@ cat sum_array
 
 #+RESULTS:
 : Array elements: 1 1 1 1 1
+
+#+begin_src C :results output :main no
+  #define SIZE 10
+  void foo(int [][SIZE], int);
+
+  int main(){
+    int bar[SIZE][SIZE] = {0};
+
+    for(int i = 0; i<SIZE; i++){
+      for(int j = 0; j<SIZE; j++){
+        bar[i][j] += 1;
+      } 
+    }
+    foo(bar, SIZE);
+    return 0;
+  }
+
+  void foo(int a[][SIZE], int size){
+    printf("Array Elements: \n");
+    for(int i = 0; i<size; i++){
+      for(int j = 0; j<size; j++){
+        printf("%d ", a[i][j]);
+      }
+      puts(" ");
+    }
+  }
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Array Elements: 
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1  
+1 1 1 1 1 1 1 1 1 1
+#+end_example
+
+** Passing by reference
+- The function =decompose= splits its argument in an integer and fractional part
+#+begin_src C :main no :results output
+  // Name: decompose
+  // Purpose: split argument x in integer and decimal part
+  // Returns: void
+  // Params: float x, intger part, float decimal part
+  // Uses: (int) casting function
+   void decompose(float, int, float);
+
+  int main(){
+    float x = 3.14159;
+    int i = 0; 
+    float d = 0.;
+
+    //decompose(x, i, d); // Pass by value
+
+    printf("%.2f %d %.2f", x, i, d);
+
+    return 0;
+  }
+
+  void decompose(float x, int i, float d){
+    i = (int) x; //drop decimals
+    d = x-i; //Keep the decimals
+
+
+
+  }
+
+#+end_src
+
+#+RESULTS:
+: 3.14 0 0.00
+
+-Refresher on pointers
+#+begin_src C :results output
+int i = 100;
+int *p = &i; // Points to i
+
+printf("%p %p \n", p, &i); //Prints address
+printf("%d %d \n", *p, i); //Prints a value
+
+(*p) = 200;
+printf("%d", *p);
+#+end_src
+
+#+RESULTS:
+: 0x7fff362b5a2c 0x7fff362b5a2c 
+: 100 100 
+: 200
+
+- We move from pass-by-value to pass-by-reference
+1) In main: call address-of variables
+2) In decompose: pass pointer variables
+3) In decompose: compute with pointer variables
+
+#+begin_src C :results output
+void decompose(float, int*, float*);
+
+  int main(){
+    float x = 3.14159;
+    int i = 0; 
+    float d = 0.;
+
+    decompose(x, &i, &d); // Pass by value
+
+    printf("%.2f %d %.2f", x, i, d);
+
+    return 0;
+  }
+
+  void decompose(float x, int *i, float *d){
+    (*i) = (int) x; //drop decimals
+    (*d) = x-(*i); //Keep the decimals
+  }
+
+#+end_src
+
+#+RESULTS:
+: 3.14 3 0.14
+
+#+begin_src C :results output
+  void add(int*, int*);
+
+  int main(){
+    int x = 3737;
+    int y = 8393;
+    add(&x, &y);
+  }
+
+  void add(int *x, int *y){
+    int sum = (*x) + (*y);
+    printf("%d + %d = %d", (*x), (*y), sum);
+    (*x) = 0;
+    (*y) = 0;
+  }
+#+end_src
+
+#+RESULTS:
+: 3737 + 8393 = 12130
+
+#+begin_src C :results output 
+  void power(int*, int*);
+
+  int main(){
+    int x = 7;
+    int n = 3; 
+    power(&x, &n);
+  }
+
+  void power(int *x, int *n){
+    int result = 1;
+    int p = (*n);
+    while((*n)-- > 0){
+      result = (*x)*result;
+    }
+    printf("%d ** %d = %d", (*x), p, result);
+  }
+
+#+end_src
+
+#+RESULTS:
+: 7 ** 3 = 343
+
+#+begin_src C
+  void say_hello(char*);
+
+  int main(){
+    char initial = 'W';
+    say_hello(&initial);
+    printf("After function call: initial = %c\n", initial);
+    return 0;
+  }
+
+  void say_hello(char *c){
+    printf("Hello, %c!\n", (*c));
+    (*c) = 'L';
+  }
+
+#+end_src
+
+#+RESULTS:
+: Hello, W!
+: After function call: initial = L
