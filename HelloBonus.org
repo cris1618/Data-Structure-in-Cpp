@@ -1,0 +1,35 @@
+#+TITLE: Hello Pointer
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+
+* Problem Description
+* Code
+#+begin_src C :main no :results output
+  // Name: say_hello
+  // Purpose: Print "Hello" and a character
+  // Returns: void
+  // Params: pointer to a Character
+  // Particularity: Uses pointers instead of direct values
+  void say_hello(char*);
+
+  int main(){
+    char initial = 'W';
+    say_hello(&initial);
+    printf("After function call: initial = %c\n", initial);
+    return 0;
+  }
+
+  void say_hello(char *c){
+    printf("Hello, %c!\n", (*c));
+    (*c) = 'L';
+  }
+
+#+end_src
+
+#+RESULTS:
+: Hello, W!
+: After function call: initial = L
+* Reflection
