@@ -454,3 +454,50 @@ void decompose(float, int*, float*);
 #+RESULTS:
 : Hello, W!
 : After function call: initial = L
+
+#+begin_src C :results output :main no
+  void increment(int* num){
+    (*num)++;
+  }
+
+  int main(void){
+    int n = 0;
+    printf("%d\n", n);
+
+    increment(&n);
+
+    printf("%d\n", n);
+
+    return 0;
+  }
+
+#+end_src
+
+#+RESULTS:
+: 0
+: 1
+
+
+** 2d array arguments
+#+begin_src C :results output :main no
+  #define SIZE 2
+  void print_array(int a[][SIZE], int* n){
+    for(int i = 0; i<(*n); i++){
+      for(int j = 0; j<SIZE; j++){
+        printf("%d ", a[i][j]);
+      }
+      puts(" ");
+    } 
+  }
+
+  int main(){
+    int n = 2;
+    int a[SIZE][SIZE] = {[0][0] = 1, [1][1]=1}; 
+    print_array(a, &n);
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: 1 0  
+: 0 1
