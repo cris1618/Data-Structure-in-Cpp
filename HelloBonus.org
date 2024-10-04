@@ -6,30 +6,68 @@
 
 
 * Problem Description
+Modify the program =say_hello= (class program) so that instead 
+of pass-by-value it is pass-by-reference.
 * Code
+** First Solution (Pointer)
 #+begin_src C :main no :results output
   // Name: say_hello
   // Purpose: Print "Hello" and a character
-  // Returns: void
-  // Params: pointer to a Character
-  // Particularity: Uses pointers instead of direct values
+  // Returns: Nothing
+  // Params: char c (Passed by reference)
   void say_hello(char*);
 
   int main(){
     char initial = 'W';
+    printf("Before function call: initial = %c\n", initial);
     say_hello(&initial);
     printf("After function call: initial = %c\n", initial);
     return 0;
   }
 
-  void say_hello(char *c){
+  void say_hello(char* c){
     printf("Hello, %c!\n", (*c));
-    (*c) = 'L';
+    (*c) = 'X';
   }
 
 #+end_src
 
 #+RESULTS:
+: Before function call: initial = W
 : Hello, W!
-: After function call: initial = L
+: After function call: initial = X
+
+** Second Solution (Triple Pointer)
+#+begin_src C :main no :results output
+  // Name: say_hello
+  // Purpose: Print "Hello" and a character
+  // Returns: Nothing
+  // Params: char c (Passed by reference)
+  void say_hello(char***);
+
+  int main(){
+    char initial = 'W';
+    char* p = &initial;
+    char** pp = &p;
+    printf("Before function call: initial = %c\n", initial);
+    say_hello(&pp);
+    printf("After function call: initial = %c\n", initial);
+    return 0;
+  }
+
+  void say_hello(char*** c){
+    printf("Hello, %c!\n", (***c));
+    (***c) = 'X';
+  }
+
+#+end_src
+
+#+RESULTS:
+: Before function call: initial = W
+: Hello, W!
+: After function call: initial = X
+
 * Reflection
+The first problem was straightforward. For this reason, 
+I attempted to solve it using double pointers, and then 
+extended the approach to triple pointers.
