@@ -1,0 +1,91 @@
+#+TITLE: Size of Pointers and Double Pointers
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Problem Description
+  The problem requires printing the memory addresses of an =integer= and 
+  a =floating-point double= variable to demonstrate their respective sizes 
+  in memory, which are =4= bytes for an =integer= and =8= bytes for a =double=. 
+  The program should also display the arithmetic difference between the 
+  memory addresses of a pointer and the pointer that points to it for both 
+  data types, using the constant =M_PI= for the double variable.
+* Code
+** int and double
+  #+begin_src C :results output 
+    #include <stdio.h>
+    #include <math.h>
+
+    int i = 0;
+    int* p = &i;
+    int** pp = &p;
+
+    printf("Address of integer pointer p->i: %d\n", (int) p);
+    printf("Address of integer pointer pp->p: %d\n", (int) pp);  
+    printf("Address difference in bytes: %d\n", (int) pp - (int) p);
+    puts(" ");
+
+    double d = M_PI;
+    double* q = &d;
+    double** qq = &q;
+
+    printf("Address of double pointer q->i: %d\n", (int) q);
+    printf("Address of double pointer qq->q: %d\n", (int) qq);
+    printf("Address difference in bytes: %d\n", (int) qq - (int) q);
+
+  #+end_src
+
+  #+RESULTS:
+  : Address of integer pointer p->i: -189017300
+  : Address of integer pointer pp->p: -189017296
+  : Address difference in bytes: 4
+  :  
+  : Address of double pointer q->i: -189017288
+  : Address of double pointer qq->q: -189017280
+  : Address difference in bytes: 8
+
+** long long and char
+   #+begin_src C :results output
+     #include <stdio.h>
+
+     long long i = 7202098299190189;
+     long long* p = &i;
+     long long** pp = &p;
+
+     printf("Address of long long pointer p->i: %d\n", (int) p);
+     printf("Address of long long pointer pp->p: %d\n", (int) pp);  
+     printf("Address difference in bytes: %d\n", (int) pp - (int) p);
+     puts(" ");
+
+     char d = "X";
+     char* q = &d;
+     char** qq = &q;
+
+     printf("Address of char pointer q->i: %d\n", (int) q);
+     printf("Address of char pointer qq->q: %d\n", (int) qq);
+     printf("Address difference in bytes: %d\n", (int) qq - (int) q);
+
+     printf("Size of char: %zu", sizeof(d));
+
+   #+end_src
+
+   #+RESULTS:
+   : Address of long long pointer p->i: 2051012752
+   : Address of long long pointer pp->p: 2051012760
+   : Address difference in bytes: 8
+   :  
+   : Address of char pointer q->i: 2051012751
+   : Address of char pointer qq->q: 2051012768
+   : Address difference in bytes: 17
+   : Size of char: 1
+
+* Reflection
+  When I wanted to print the difference between the char pointer 
+  addresses, I was surprised by the result of 17. I was expecting 
+  1 since the size of a =char= is 1 in =C=. From what I understand, the 
+  reason is that while other data types like =int=, =double=, and =long long= 
+  have specific memory addresses to optimize access speed, =char= does not 
+  have strict alignment requirements due to its smaller size. Therefore, 
+  the result depends on the machine I'm using. If this is wrong and you 
+  know why this happens, please let me know.
