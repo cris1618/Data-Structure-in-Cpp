@@ -1,0 +1,64 @@
+#+TITLE: Array Manipulation and Functions
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Problem description
+* Code
+  #+begin_src bash :results output
+  echo "63 73 89 93 10" > amf
+  cat amf
+  #+end_src
+
+  #+RESULTS:
+  : 63 73 89 93 10
+
+  #+begin_src C :results output :main no :cmdline < amf
+    #define SIZE 5
+    void in_arr(int a[], int size);
+
+    int sum_arr(int a[], int size);
+
+    void print_arr(int a[], int size);
+
+    int main(){
+      int a[SIZE];
+      in_arr(a, SIZE);
+      printf("\nSum of array elements: %d\n", sum_arr(a, SIZE));
+      print_arr(a, SIZE);
+    }
+
+    void in_arr(int a[], int size){
+      int n;
+      puts("Enter 5 integers: ");
+      for(int i = 0; i<size; i++){
+	scanf("%d", &n);
+	a[i] = n;
+	printf("%d ", a[i]);
+      }
+    }
+
+    int sum_arr(int a[], int size){
+      int sum = 0;
+      for(int i = 0; i<size; i++)
+	sum += a[i];
+      return sum;
+    }
+
+    void print_arr(int a[], int size){
+      printf("Array elements: ");
+      for(int i = 0; i<size; i++)
+	printf("%d ", a[i]);
+    }
+
+
+  #+end_src
+
+  #+RESULTS:
+  : Enter 5 integers: 
+  : 63 73 89 93 10 
+  : Sum of array elements: 328
+  : Array elements: 63 73 89 93 10
+
+* Reflection
