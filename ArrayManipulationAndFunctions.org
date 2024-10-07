@@ -5,60 +5,140 @@
 #+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
 
 * Problem description
+The problem asks to write a =C= program that does the following:
+
+- Define an =array= of integers with a size of 5.
+- Create a function to input values into the =array= (print each value as it is entered).
+- Create a function that calculates and returns the =sum= of all elements in the =array=.
+- Create another function to print all the elements of the =array=.
+
+Finally, in the =main= function, print the =sum= of the array elements and then print 
+the elements of the array.
+
 * Code
-  #+begin_src bash :results output
-  echo "63 73 89 93 10" > amf
+** Three Functions
+#+begin_src bash :results output
+  echo "1 2 3 4 5" > amf
   cat amf
+#+end_src
+
+#+RESULTS:
+: 1 2 3 4 5
+
+#+begin_src C :results output :main no :cmdline < amf :tangle amf.c
+  #define SIZE 5
+
+  // Name: in_arr
+  // Purpose: Insert values in an array (From user input).
+  // Return: Nothing.
+  // Parameters: integer array, size of the array.
+  void in_arr(int a[], int size);
+
+  // Name: sum_arr
+  // Purpose: Sum elements of an array.
+  // Return: integer sum.
+  // Parameters: integer array, size of the array.
+  int sum_arr(int a[], int size);
+
+  // Name: print_arr
+  // Purpose: Print elements of an array.
+  // Return: Nothing.
+  // Parameters: integer array, size of the array.
+  void print_arr(int a[], int size);
+
+  int main(){
+    int a[SIZE];
+    in_arr(a, SIZE);
+    printf("\nSum of array elements: %d\n", sum_arr(a, SIZE));
+    print_arr(a, SIZE);
+  }
+
+  void in_arr(int a[], int size){
+    int n;
+    puts("Enter 5 integers: ");
+    for(int i = 0; i<size; i++){
+      scanf("%d", &n);
+      a[i] = n;
+      printf("%d ", a[i]);
+    }
+  }
+
+  int sum_arr(int a[], int size){
+    int sum = 0;
+    for(int i = 0; i<size; i++)
+      sum += a[i];
+    return sum;
+  }
+
+  void print_arr(int a[], int size){
+    printf("Array elements: ");
+    for(int i = 0; i<size; i++)
+      printf("%d ", a[i]);
+    puts("");
+  }
   #+end_src
 
-  #+RESULTS:
-  : 63 73 89 93 10
+#+RESULTS:
+: Enter 5 integers: 
+: 1 2 3 4 5 
+: Sum of array elements: 15
+: Array elements: 1 2 3 4 5
 
-  #+begin_src C :results output :main no :cmdline < amf
-    #define SIZE 5
-    void in_arr(int a[], int size);
+** One Function (Pointers)
+#+begin_src bash
+  echo "3 1 4 5" > amf2
+  cat amf2
+#+end_src
 
-    int sum_arr(int a[], int size);
+#+RESULTS:
+: 3 1 4 5
 
-    void print_arr(int a[], int size);
+#+begin_src C :results output :tangle amf2.c :cmdline < amf2
+  // Name: all_arr
+  // Purposes: - Insert values in an array (From user input).
+  //           - Sum elements of an array.
+  //           - Print elements of an array.
+  // Return: Nothing.
+  // Parameters: integer array, size of the array.
+  void all_arr(int a[], int* size);
 
-    int main(){
-      int a[SIZE];
-      in_arr(a, SIZE);
-      printf("\nSum of array elements: %d\n", sum_arr(a, SIZE));
-      print_arr(a, SIZE);
+  int main(){
+    int size;
+    puts("What's your favourite number? ");
+    scanf("%d", &size);
+    int a[size];
+    all_arr(a, &size);
+  }
+
+  void all_arr(int a[], int* size){
+    int n;
+    int sum = 0;
+    printf("Enter %d integers: ", *size);
+    for(int i = 0; i<(*size); i++){
+      scanf("%d", &n);
+      a[i] = n;
+      sum += a[i];
+      printf("%d ", a[i]);
     }
+    printf("\nSum of array elements: %d\n", sum);
+    printf("Array elements: ");
+    for(int i = 0; i<(*size); i++)
+      printf("%d ", a[i]);
+    puts("");
+  }
 
-    void in_arr(int a[], int size){
-      int n;
-      puts("Enter 5 integers: ");
-      for(int i = 0; i<size; i++){
-	scanf("%d", &n);
-	a[i] = n;
-	printf("%d ", a[i]);
-      }
-    }
+#+end_src
 
-    int sum_arr(int a[], int size){
-      int sum = 0;
-      for(int i = 0; i<size; i++)
-	sum += a[i];
-      return sum;
-    }
-
-    void print_arr(int a[], int size){
-      printf("Array elements: ");
-      for(int i = 0; i<size; i++)
-	printf("%d ", a[i]);
-    }
-
-
-  #+end_src
-
-  #+RESULTS:
-  : Enter 5 integers: 
-  : 63 73 89 93 10 
-  : Sum of array elements: 328
-  : Array elements: 63 73 89 93 10
+#+RESULTS:
+: What's your favourite number? 
+: Enter 3 integers: 1 4 5 
+: Sum of array elements: 10
+: Array elements: 1 4 5
 
 * Reflection
+The first program was trivial. Then, I attempted to create 
+a more """complex""" program that combines the functionality of the three separate 
+functions into a single function. To make it a bit more interesting, I passed 
+the size of the array as a =pointer=. To generalize it further, the user is 
+prompted to input the size of the array and then provide a corresponding number 
+of elements based on their chosen =size=.
