@@ -4,7 +4,7 @@
 #+STARTUP:overview hideblocks indent
 #+OPTIONS: toc:1 num:2 ^:nil
 #+PROPERTY: header-args:C++ :main yes :includes <iostream> :results output :exports both :noweb yes
-#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output :exports both :noweb yes
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> :results output :exports both :noweb yes
 * Overview
 
 - *Objectives:*
@@ -208,3 +208,83 @@ cat vlaa
     int concat(int m, int n, int a[m], int b[n], int c[m+n]);
   #+end_src
 
+* The return statement
+Example of a =return= statement in a =void= function
+#+begin_src C :results output
+  void print(int i){
+    if (i<0)
+      return;
+    else
+      printf("%d\n", i);
+  }
+
+  int main(){
+    int n = -1;
+    print(n);
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+
+* The exit function
+#+begin_src bash :results outpit
+  echo "100 200" > input
+  cat input
+#+end_src
+
+#+RESULTS:
+: 100 200
+
+#+begin_src C :results output :cmdline < input :main no
+  // define failure/success using stdlib macros
+  #define FAILURE EXIT_FAILURE
+  #define SUCCESS EXIT_SUCCESS
+
+  int main(){
+    int i, j;
+    scanf("%d%d", &i, &j);
+    // Print 0 or 1 depending on input values
+    printf("%d", i > j ? SUCCESS : FAILURE);
+    return 0;
+  }
+
+
+
+#+end_src
+
+#+RESULTS:
+: 1
+* Recursion
+Factorial Function with recursion
+#+begin_src C 
+  int factorial(int x){
+    int result;
+    if(x==0)
+      return 1;
+    else
+      result = x * factorial(x-1);
+  }
+
+  int pow(int x, int n){
+    int result;
+    if(n==0)
+      return 1;
+    else
+      result = x * pow(x, n-1);
+    return result;
+  }
+
+  int main(){
+    int n = 5;
+    int ex = 2;
+    int fact = factorial(n);
+    printf("%d\n", fact);
+    printf("%d", pow(n, ex));
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: 120
+: 25
