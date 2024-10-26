@@ -1,0 +1,63 @@
+#+TITLE: Recursive Euclidean Algorithm
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> :results output
+
+* Problem Description
+Write a =recursive= function to find the =greatest 
+commond divisor/denominator= (GCD) of two integers.
+
+** Algorithm description
+If the second argument, =n=, is equal to 0, return 
+the first argument, =m=. Otherwise, call the function 
+recursively, passing =n= as the first argument and =m % n= 
+as the second.
+
+* Code
+#+begin_src bash
+echo "12 28" > gcd_r
+cat gcd_r
+#+end_src
+
+#+RESULTS:
+: 12 28
+
+#+begin_src C :cmdline < gcd_r
+
+  // Function prototype
+  // Name: gcd_r
+  // Purpose: Find the GCD between two numbers using EA with recursion.
+  // Returns:  integer GCD
+  // Parameters:
+  // int m  = first integer value.
+  // int n = second integer value.
+  int gcd_r(int m, int n);
+
+  
+  int main(){
+    int m, n;
+    scanf("%d%d", &m, &n);
+
+    // Print the GCD
+    printf("GCD of %d and %d: %d", m, n, gcd_r(m,n));
+
+    return 0;
+  }
+
+
+  // Function declaration
+  int gcd_r(int m, int n){
+    if(n == 0)
+      return m;
+
+    return gcd_r(n, m%n);
+  }
+#+end_src
+
+#+RESULTS:
+: GCD of 12 and 28: 4
+
+* Reflection
+It’s always fun to understand the logic of a =recursive= 
+function. Overall, the problem was trivial. Thanks!
