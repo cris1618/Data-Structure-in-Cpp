@@ -1,0 +1,258 @@
+#+TITLE: Memory Organizatin (Stack)
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> :results output
+
+* Storage and Scope
+
+- Any variable declared in the body of a function is =local= 
+  to that function.
+
+- =Automatic storage duration=: compiler allocates storage when the 
+  function is called, and =deallocates= it upon return.
+
+- Local variables have =block scope=: they are visible when declared
+  to the end of the enclosing body.
+
+- Which of the variable in this function are local?
+
+#+begin_src C 
+  int sum_digits(int n){ // Local to function
+    int sum = 0; // Local to function & block scope
+
+    while(n>0){
+      sum += n % 10
+        n /= 10;
+    }
+    return sum;
+  }
+
+#+end_src
+
+- An example for a variable with minimal scope:
+#+begin_src C
+  void f(void){
+    // Anything here
+    int i; // Minimal scope
+  }
+#+end_src
+
+#+RESULTS:
+
+- By prefexing the declaration with =static= the variable is
+  stored permanently and keeps its value through the program.
+
+* Example: =Static= local variables
+#+begin_src C
+  // Without static (Demonstate locality of the variable);
+  void count_calls(void){
+    int call_count = 0;
+    call_count++;
+    printf("Function Called: %d time(s).\n", call_count); 
+  }
+
+  int main(){
+    count_calls();
+    count_calls();
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: Function Called: 1 time(s).
+: Function Called: 1 time(s).
+
+#+begin_src C
+  void count_calls(void){
+    static int call_count = 0;
+    call_count++;
+    printf("Function Called: %d time(s).\n", call_count); 
+  }
+
+  int main(){
+    count_calls();
+    count_calls();
+    return 0;
+  }
+
+#+end_src
+
+#+RESULTS:
+: Function Called: 1 time(s).
+: Function Called: 2 time(s).
+
+* Variable scope
+- In this (correct but contrived) fragment, =i= is declared 
+  in four different ways:
+
+#+begin_src C 
+  int i; // Declaration 1
+
+
+  void f(int i){ // Declaration 2
+    i = 1; // 2
+  }
+
+  void g(void){
+    int i = 2; // Declaration 3
+
+    if(i>0){
+      int i; // Declaration 4
+      i = 3; // 4
+    }
+    i = 4; // 3
+  }
+
+  void h(void){
+    i=5; // 1
+  }
+#+end_src
+
+#+RESULTS:
+
+1. =i= is an =external variable= with =static= storage duration & file
+   scope.
+
+2. =i= is a parameter with block (function) scope.
+
+3. =i= is an =automatic variable= with =block scope= (function body).
+
+4. =i= is an =automatic variable= with =block scope= (selection body).
+
+* Type Conversion
+- Important: For any operation, the operands must be of the same
+  size (same number of bits) and stored in the same way (same
+  data type).
+
+- Example of implicit type conversion.
+#+begin_src C
+  int i = 1;
+  float x = 1.f;
+  char c = 'a'; // ASCII value of 'a' is 97
+
+  // Implicit type conversion
+  double result = i + x + c; // all RHS operands converted to 'double'
+
+  // Print the result
+  printf("%g\n", result);
+
+#+end_src
+
+#+RESULTS:
+: 99
+
+* Implicit Artithmetic Conversion
+
+1) Operands have different type: =float f; int i = 2 * f;=
+
+2) Type on left does not match type on the right of
+   =float f; int i = f;=
+
+3) When the type of an argument in the function call does not match the 
+   corresponding parameter:
+#+begin_src C
+  void f(int i){
+    // Computations with i are greater
+  }
+
+  float x;
+  f(x);
+#+end_src
+
+#+RESULTS:
+
+4) When the type of the =return= expression does not match the function 
+   return type:
+#+begin_src C
+  int f(int i){
+    return 0.f;
+  }
+#+end_src
+
+* Explicit type conversion
+#+begin_src C
+int i = 1;
+float x = 1.5f;
+char c = 'a';
+
+double result = i + x + c;
+
+printf("Implicit Conversion: %g\n", result);
+
+// Explicit conversion
+result = (double)i + (double)x + (double)c;
+
+printf("Explicit Conversion: %g", result);
+#+end_src
+
+#+RESULTS:
+: Implicit Conversion: 99.5
+: Explicit Conversion: 99.5
+
+* Type definitions with =typedef=
+
+- Define a Boolean with macro:
+#+begin_src C
+#define BOOL int
+
+BOOL T = 1;
+BOOL F = 0;
+#+end_src
+
+#+RESULTS:
+
+- Do the same thing with =typedef=
+#+begin_src C
+typedef int bool; // define the type 'bool' as 'int'
+
+bool flag;
+#+end_src
+
+#+RESULTS:
+
+- Example: More informative, and more efficient
+#+begin_src C 
+typedef float Dollars; // you only have to change this
+
+Dollars cash_in, cash_out;
+#+end_src
+
+- Example: You have a large warehouse program, and your variables
+           need to be able to store product quantities in [0,50000]
+
+If you want to use =int=, use =typedef= to define a new type:
+#+begin_src C
+typedef int Quantity;
+
+Quantity q;
+printf("Size of Quantity = %d", sizeof(q));
+
+#+end_src
+
+#+RESULTS:
+: Size of Quantity = 4
+
+- The =stdint.h= header library uses =typedef= to define names for integers
+  with a specific number of bits - =int32_t= - for portability.
+
+* External variables (stack example)
+
+#+begin_src C
+// prepocessor directives
+#include <stdbool.h> // to use the bool type
+#include <stdlib.h> // to use EXIT_FAILURE macro
+#define STACK_SIZE 100 // size of our stack
+
+// External variables 
+int contents[STACK_SIZE]; // Array to store stack values
+int top = 0; // Stack 'pointer'
+
+// Function declarations
+
+// main program
+
+// Function definitions
+#+end_src
+
+#+RESULTS:
