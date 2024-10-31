@@ -1,0 +1,181 @@
+#+TITLE: Pointers
+#+STARTUP:overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> :results output :exports both :comments none :noweb yes
+* Stack Implementation
+
+#+begin_src C
+  #include <stdbool.h> // add data type 'bool'
+  #define STACK_SIZE 20 // size of our stack
+
+  /* external variables */
+  int contents[STACK_SIZE]; // modelling stack as integer array
+  int top = 0;
+
+  void make_empty()
+  {
+    top = 0; // set  pointer back to start
+  }
+
+  bool is_empty()
+  {
+    return top == 0; // is the pointer pointing at the contents[0]
+  }
+
+  bool is_full(){
+    return top == STACK_SIZE; // is the pointer pointing at the contents[STACK_SIZE]
+  }
+
+  int stack_underflow(){
+    printf("Stack underflow!\n");
+    return EXIT_FAILURE;
+  }
+
+  int stack_overflow(){
+    printf("Stack overflow!\n");
+    return EXIT_FAILURE;
+  }
+
+  void push(int i){ // pushes integer argument on stack
+    if(is_full())
+      stack_overflow(); // Abort when stack is full
+    else 
+      contents[top++] = i; // put i on top of stack
+  }
+
+  int pop(){ // Return an integer from the stack
+    if(is_empty())
+      stack_underflow(); // abort when stack is empty
+    else
+      return contents[--top]; // move stack pointer down
+  }
+
+  const void print_stack(){
+    printf("Stack Pointer = %d\n", top);
+    for(int i = 0; i<STACK_SIZE; i++)
+      printf("%d ", contents [i]);
+    puts("");
+  }
+
+  // Main program
+  int main(){
+    print_stack(); // Initial state
+    push(1);
+    print_stack();
+
+    int number = pop();
+    printf("%d\n", number);
+
+    for(int i = 0; i<STACK_SIZE; i++)
+      push(1);
+    print_stack();
+
+    // Stack overflow
+    push(1);
+
+    for(int i = 0; i<STACK_SIZE; i++)
+      pop();
+    print_stack();
+
+    // Stack Underflow
+    pop();
+
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Stack Pointer = 0
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+Stack Pointer = 1
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+1
+Stack Pointer = 20
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+Stack overflow!
+Stack Pointer = 0
+1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+Stack underflow!
+#+end_example
+
+* Pointer Arithmetic
+
+** Pointers can point to array elements
+1) Define a pointer
+2) Point at array element
+
+#+begin_src C
+  int a [10] = {0,1,2,3,4,5,6,7,8,9}; 
+  int* p; // * is a declaration symbol
+  int* q;
+
+  p = &a[0]; // p points at a[0]
+  q = &a[9];
+
+  printf("p points at a[%d]\n", *p); // * is a dereferencing operator
+  printf("q points at a[%d]\n", *q);
+
+  (*p) = 5;
+
+  printf("a[0] = %d\n", a[0]);
+#+end_src
+
+#+RESULTS:
+: p points at a[0]
+: q points at a[9]
+: a[0] = 5
+
+** Adding and subtracting pointers
+1) Adding an integer to a pointer
+
+#+begin_src C
+int a [10] = {0,1,2,3,4,5,6,7,8,9}; 
+int* p, *q;
+
+p = &a[2]; // Point at a[2]
+
+q = p + 3; // q points at a[2+3] = a[5]
+printf("q points at a[%d]\n", *q);
+
+p += 6; // p points at a[2+6] = a[8]
+printf("p points at a[%d]\n", *p);
+
+
+#+end_src
+
+#+RESULTS:
+: q points at a[5]
+: p points at a[8]
+
+** Comparing pointers
+
+#+begin_src C
+
+#+end_src
+
+** Pointers to compound literals
+
+#+begin_src C
+
+#+end_src
+
+** Using pointers to process arrays
+
+#+begin_src C
+ 
+#+end_src
+
+** Combining indirection and compound operators
+
+#+begin_src C
+
+#+end_src
+
+** Using an array name as a pointer
+
+#+begin_src C
+
+#+end_src
+
+** Revisiting =reverse.c=
+
