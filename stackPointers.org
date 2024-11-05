@@ -1,0 +1,360 @@
+#+STARTUP:overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> :results output :exports both :comments none :noweb yes
+* Stack Implementation
+
+#+begin_src C :main no
+  #include <stdbool.h> // add data type `bool`
+  #include <stdlib.h> // include EXIT_FAILURE macro
+  #define STACK_SIZE 20  // size of our stack
+
+  /* external variables */
+  int contents[STACK_SIZE]; // modeling stack as integer array
+  int top = 0;
+
+  void make_empty(void)
+  {
+    top = 0;   // set pointer back to start
+  }
+
+  bool is_empty(void)
+  {
+    return top == 0; // is the pointer pointing at contents[0]
+  }
+
+  bool is_full(void)
+  {
+    return top == STACK_SIZE; // is the pointer pointing at contents[STACK_SIZE]
+  }
+
+  int stack_overflow(void) // triggered when pushing on a full stack
+  {
+    printf("Stack overflow!\n");
+    return EXIT_FAILURE;  // macro defined in stdlib.h - ABORT
+  }
+
+  int stack_underflow(void) // triggered when popping an empty stack
+  {
+    printf("Stack underflow!\n");
+    return EXIT_FAILURE;  // macro defined in stdlib.h - ABORT
+  }
+
+  void push(int i)  // pushes integer argument on stack
+  {
+    if (is_full())
+      stack_overflow();  // abort when stack is full
+    else
+      contents[top++] = i;  // put i on top of stack
+  }
+
+  int pop(void)  // returns an integer from the stack
+  {
+    if (is_empty())
+      stack_underflow(); // abort when stack is empty
+    else
+      return contents[--top]; // return top element of stack (LIFO)
+  }
+
+  const void print_stack(void)
+  {
+    printf("stack pointer = %d\n", top);
+    for (int i=0; i < STACK_SIZE; i++)
+      printf("%d ", contents[i]);
+    puts("");
+  }
+
+  // main program
+  int main (void)
+  {
+    print_stack(); // initial state
+    push(1);
+    print_stack();
+    pop();
+    print_stack();
+
+    for (int i=0; i < STACK_SIZE; i++)
+      push(1);
+    print_stack();
+    push(1);
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: stack pointer = 0
+: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+: stack pointer = 1
+: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+: stack pointer = 0
+: 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+: stack pointer = 20
+: 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+: Stack overflow!
+
+
+
+* Pointer Arithmetic
+
+What are pointers good for:
+1) Direct access to memory (important for hardware)
+2) Allocation of memory at runtime
+3) Passing arguments by reference to modify vars in calling functions
+4) Passing pointers means you don't have to copy stuff
+5) Create complex data structures (linked lists, trees, graphs)
+6) Create memory-efficient programs (important big data)
+7) Enable "polymorphic" behavior in C and C++ (OOP)
+
+** Pointers can point to array elements
+1) Define pointer to array
+2) Point at array element
+
+#+begin_src C
+  int a[10] = {0,1,2,3,4,5,6,7,8,9}; // 0-9 values
+  int *p; // * is a declaration symbol
+  int *q; 
+
+  p = &a[0];  // p points at a[0]
+  q = &a[9];  // q points at a[9]
+
+  printf("p points at a[%d]\n", *p); // * is a derefencing operator
+  printf("q points at a[%d]\n", *q); 
+
+  (*p) = 5;
+  printf("a[0] = %d\n", a[0]);
+#+end_src
+
+#+RESULTS:
+: p points at a[0]
+: q points at a[9]
+: a[0] = 5
+
+** Adding and subtracting pointers
+
+Adding an integer to a pointer
+
+#+begin_src C
+  int a[10] = {0,1,2,3,4,5,6,7,8,9};
+  int *p, *q;
+
+  p = &a[2]; // points at a[2]
+  printf("p points at a[%d]\n", *p);
+
+  q = p + 3; // q point at a[2+3] = a[5]
+  printf("q points at a[%d]\n", *q);
+
+  p += 6; // p points at p[2+6] = p[8]
+  printf("p points at a[%d]\n", *p);
+#+end_src
+
+#+RESULTS:
+: p points at a[2]
+: q points at a[5]
+: p points at a[8]
+
+** Comparing pointers
+
+#+begin_src C
+int a[10], *p, *q, i;
+
+p = &a[5];
+q = &a[1];
+
+printf("p < q: %d\n", p < q); // 5 < 1 is FALSE or 0
+printf("p > q: %d\n", p > q); // 5 > 1 is TRUE or 1
+
+printf("%d < %d: %d\n",p, q, p < q); // 5 < 1 is FALSE or 0
+printf("%d > %d: %d\n",p, q, p > q); // 5 > 1 is TRUE or 1
+#+end_src
+
+#+RESULTS:
+: p < q: 0
+: p > q: 1
+: 1585641124 < 1585641108: 0
+: 1585641124 > 1585641108: 1
+
+** Pointers to compound literals
+
+#+begin_src C
+  int* p = (int []){3,0,3,4,1}; // p points at 3, first element
+
+  printf("p points at 1st element = %d\n", *p);
+
+  p += 4;
+
+  printf("p points at 5th element = %d\n", *p);
+
+#+end_src
+
+#+RESULTS:
+: p points at 1st element = 3
+: p points at 5th element = 1
+
+** Using pointers to process arrays
+
+Example: Sum elemnet of an array
+#+begin_src C
+  #define N 10
+
+  int a[N] = {11, 34, 82, 7, 64, 98, 47, 18, 79, 20};
+
+  int sum_i, i;
+
+  sum_i = 0;
+
+  for(i=0; i<N; i++)
+    sum_i += a[i];
+
+  printf("Sum = %d\n", sum_i); 
+#+end_src
+
+#+RESULTS:
+: Sum = 460
+
+ With pointers
+#+begin_src C
+  #define N 10
+
+  int a[N] = {11, 34, 82, 7, 64, 98, 47, 18, 79, 20};
+
+  int sum_i, i;
+  int sum_p, *p;
+
+  sum_p = 0;
+
+  for(p=&a[0]; p<&a[N]; p++){
+    sum_p += *p;
+    printf("iter: %d sum: %d\n", *p, sum_p);
+   }
+
+  printf("Sum (p)= %d\n", sum_p);
+
+  // While loop
+  int sum = 0;
+  p = &a[0]; // start condition
+  while(p<&a[N])
+    sum = sum + (*p++); // sum += *(&a[i++])
+
+  printf("sum = %d\n", sum);
+
+#+end_src
+
+#+RESULTS:
+#+begin_example
+iter: 11 sum: 11
+iter: 34 sum: 45
+iter: 82 sum: 127
+iter: 7 sum: 134
+iter: 64 sum: 198
+iter: 98 sum: 296
+iter: 47 sum: 343
+iter: 18 sum: 361
+iter: 79 sum: 440
+iter: 20 sum: 460
+Sum (p)= 460
+sum = 460
+#+end_example
+
+** Combining indirection and compound operators
+
+What is the pointer equivalent of =a[i++] = j=
+
+Stack:
+- =Push=: =cotents[top++]= 
+- =pop=: =contents[--top]=
+
+if the pointer =p= points at a[i] then *p++ point at =*&a[i++]= or =a[i++]= 
+
+so a[i++] = j is the same as *p++ = j.
+#+begin_src C
+  int a[10]={0}, i, j, val, *p;
+
+  i = 1;
+  val = -1;
+  a[i++] = val;
+
+  i = 6;
+  p = &a[6];
+  (*p++) = val; // assign val to *p and then advance to p + 1
+
+  for(j=0; j<10; j++)
+    printf("%d ", a[j]);
+
+printf("\nvalue *p = %d\n", *p);
+#+end_src
+
+#+RESULTS:
+: 0 -1 0 0 0 0 -1 0 0 0 
+: value *p = 0
+
+In the stack, you can replace =top= by a pointer variable that points initially at =contents[0]=:
+#+begin_src C
+int* top_ptr = &contents[0];
+#+end_src
+
+contents[top++] -> *top_ptr++
+contents[--top] -> *--top_ptr
+
+** Using an array name as a pointer
+
+You can use the name of an array as a pointer.
+
+#+begin_src C
+int a[10];
+
+(*a) = 7; // store 7 in a[0]
+
+(*(a+1)) = 12; // store 12 in a[1]
+
+printf("a[1] = %d", a[1]); 
+#+end_src
+
+#+RESULTS:
+: a[1] = 12
+
+Revisited for loop
+#+begin_src C
+for(p=a; p<a+N; p++){ 
+...
+}
+
+#+end_src
+** Revisiting =reverse.c=
+
+- As an application of array names as pointers, we revisit =reverse.c=:
+  #+begin_src C :tangle reverse.c :main no :includes :results none
+    /**************************************************************/
+    // reverse.c: reverse a series of numbers entered by the user
+    // Store numbers as int array with scanf in a for loop
+    // Print numbers in reverse order with printf in a for loop
+    /**************************************************************/
+    #include <stdio.h> // include input/output header file
+    #define N 10  // define constant array length with directive
+
+    int main() // main program
+    {
+      int i;           // declare loop variable
+      int a[N] = {0};  // macro definition (uses constant N)
+      printf("Enter 10 numbers: "); // ask for input
+      for ( i = 0; i < N; i++) { // loop over array (counting up)
+        scanf("%d", &a[i]); // get the i-th array element from stdin
+        printf("%d ", a[i]); // print the i-th array element to stdout
+      }
+      puts("");  // add new line
+      printf("In reverse order: ");
+      for ( i = N-1; i >= 0; i--) { // loop over array (counting down)
+        printf("%d ", a[i]);
+      }
+      puts("");
+      return 0; // confirm program ran successfully
+    } // end of main program
+  #+end_src
+
+- After tangling the file (=C-u C-c C-v t=):
+  #+begin_src bash :results output :exports both
+    gcc reverse.c -o rev
+    echo 34 82 49 102 2 94 23 11 50 31 | ./rev
+  #+end_src
+
+  #+RESULTS:
+  : Enter 10 numbers: 34 82 49 102 2 94 23 11 50 31 
+  : In reverse order: 31 50 11 23 94 2 102 49 82 34 
+
