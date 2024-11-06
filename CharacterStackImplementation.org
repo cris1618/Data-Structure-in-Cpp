@@ -1,0 +1,256 @@
+#+TITLE: Character Stack Implementation
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> :results output :noweb yes
+
+* Problem Description
+** Standard assignment
+Modify the stack example from class so that it stores 
+characters instead of integers.
+** Bonus 
+Create a program to determine if a string containing 
+parentheses =()= and braces ={}= is properly nested. The 
+program should check that each opening symbol has a 
+corresponding and correctly ordered closing symbol 
+using a predefined string =const char *expression = "((){}{()})";=. 
+The solution should utilize a stack to track opening 
+symbols and validate the structure as the string is processed.
+
+*** Alghoritm Bonus problem
+1) Start by reading the input string expression, which contains 
+   the sequence of parentheses and braces to be checked.
+
+2) Iterate through each character in the string to process it 
+according to its type (either an opening or a closing symbol):
+
+- If it's an opening symbol ('(' or '{'), push it onto a stack. 
+
+- If it's a closing symbol (')' or '}'):
+
+-- Check if the stack is empty: If so, print an error message 
+   and exit the program.
+
+-- Pop the top element from the stack: Compare this element with 
+   the current closing symbol. The popped element should be the 
+   matching opening symbol for the current closing symbol.
+
+--- If they do not match, print an error message (No match) and exit 
+    the program. 
+    
+3) Check if the stack is empty: 
+- If the stack is not empty print that the structure is not properly nested.
+- If the stack is empty, print that the parentheses and braces are properly nested.
+
+* Code 
+** Standard assignment
+#+name: char_stack
+#+begin_src C
+  #define STACK_SIZE 20  // size of our stack
+
+  /* external variables */
+  char contents[STACK_SIZE]; // modeling stack as integer array
+  int top = 0;
+
+  void make_empty(void)
+  {
+    top = 0;   // set pointer back to start
+  }
+
+  bool is_empty(void)
+  {
+    return top == 0; // is the pointer pointing at contents[0]
+  }
+
+  bool is_full(void)
+  {
+    return top == STACK_SIZE; // is the pointer pointing at contents[STACK_SIZE]
+  }
+
+  void stack_overflow(void) // triggered when pushing on a full stack
+  {
+    printf("Stack overflow!\n");
+    exit(EXIT_FAILURE);  // macro defined in stdlib.h - ABORT
+  }
+
+  void stack_underflow(void) // triggered when popping an empty stack
+  {
+    printf("Stack underflow!\n");
+    exit(EXIT_FAILURE);  // macro defined in stdlib.h - ABORT
+  }
+
+  void push(char c)  // pushes character argument on stack
+  {
+    if (is_full())
+      stack_overflow();  // abort when stack is full
+    else
+      contents[top++] = c;  // put c on top of stack
+  }
+
+  char pop(void)  // returns an integer from the stack
+  {
+    if (is_empty())
+      stack_underflow(); // abort when stack is empty
+    else
+      return contents[--top]; // return top element of stack (LIFO)
+  }
+
+  const void print_stack(void)
+  {
+    printf("stack pointer = %d\n", top);
+    for (int i=0; i < STACK_SIZE; i++)
+      printf("%c ", contents[i]);
+    puts("");
+  }
+
+  /*int main(){
+    // fill the stack
+    for(int i=0; i<STACK_SIZE; i++)
+      push('C');
+    print_stack(); 
+
+    // Stack overflow
+    //push('A');
+
+    // pop everything from the stack
+    for(int i = 0; i<STACK_SIZE; i++)
+      pop();
+    print_stack();
+
+    // Stack Underflow
+    //pop();
+
+    return 0;
+  }*/ // Commented to import it on the BONUS part
+#+end_src
+
+#+RESULTS: char_stack
+: stack pointer = 20
+: C C C C C C C C C C C C C C C C C C C C 
+: stack pointer = 0
+: C C C C C C C C C C C C C C C C C C C C
+
+** Bonus 
+#+begin_src C
+  <<char_stack>>
+  int main(){
+    // Define the string
+    const char* expression = "((){}{()})";
+    int len = strlen(expression);
+
+    for (int i = 0; i < len; i++) {
+      char ch = expression[i];
+      if (ch == '(' || ch == '{') {
+        push(ch);
+      } else if (ch == ')' || ch == '}') {
+        // Check if there are closing p. and nothing in the stack
+        if (is_empty()) {
+          printf("Parentheses/braces are not nested properly\n");
+          return 0; 
+        }
+        char element = pop();
+        // handle cases like "{(})"
+        if ((ch == ')' && element != '(') || (ch == '}' && element != '{')) {
+          printf("Parentheses/braces are not nested properly\n");
+          return 0; 
+        }
+      }
+    }
+
+    if (!is_empty()) {
+      printf("Parentheses/braces are not nested properly\n");
+    } else {
+      printf("Parentheses/braces are nested properly\n");
+    }
+
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: Parentheses/braces are nested properly
+
+** General Version
+#+begin_src bash
+  echo "8((){})()" > stackexp
+  cat stackexp 
+#+end_src
+
+#+RESULTS:
+: 8((){})()
+
+#+begin_src C :cmdline < stackexp :main no :tangle stex.c
+  <<char_stack>>
+  int main(){
+    int len;
+    puts("How many characters do yo want the string to have? (Max 20).");
+    scanf("%d", &len);
+    printf("Expression's length: %d\n", len);
+
+    // Allocate memory only for length needed
+    char* expression = malloc(len + 1);
+    if(expression == NULL){
+      fprintf(stderr, "malloc error\n");
+      exit(1);
+    }
+
+    puts("Write a combination of '(', ')','{' and '}' to check if they match.");
+    printf("Expression: ");
+    for(int i = 0; i<len; i++){
+      scanf("%c", &expression[i]);
+      printf("%c", expression[i]);
+    }
+    expression[len] = '\0';
+
+    for (int i = 0; i < len; i++) {
+      char ch = expression[i];
+      if (ch == '(' || ch == '{') {
+        push(ch);
+      } else if (ch == ')' || ch == '}') {
+        // Check if there are closing p. and nothing in the stack
+        if (is_empty()) {
+          printf("\nParentheses/braces are not nested properly\n");
+          return 0; 
+        }
+        char element = pop();
+        // handle cases like "{(})"
+        if ((ch == ')' && element != '(') || (ch == '}' && element != '{')) {
+          printf("\nParentheses/braces are not nested properly\n");
+          return 0; 
+        }
+      }
+    }
+
+    if (!is_empty()) {
+      printf("\nParentheses/braces are not nested properly\n");
+    } else {
+      printf("\nParentheses/braces are nested properly\n");
+    }
+
+
+    free(expression);
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: How many characters do yo want the string to have? (Max 20).
+: Expression's length: 8
+: Write a combination of '(', ')','{' and '}' to check if they match.
+: Expression: ((){})()
+: Parentheses/braces are nested properly
+
+* Reflection
+The standard assignment was trivial. I simply adjusted the 
+type of the stack array and updated functions to handle 
+characters, such as in the =push= function.
+
+The bonus part was more engaging. The real challenge 
+was in addressing the edge cases, like when the expression 
+ends with a closing bracket, e.g., =(){})=, requiring the 
+introduction of the =is_empty()= condition right at the 
+beginning of the second if-statement.
+
+Working on the generalized version offered a good practice 
+in handling strings and dynamic memory allocation.
+ 
