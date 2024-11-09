@@ -1,0 +1,128 @@
+#+TITLE: Stack Pointer Implementation
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> :results output :noweb yes
+
+* Problem description
+Modify the existing stack implementation in C by replacing the integer 
+variable =top=, which tracks the top-of-stack position, with a pointer 
+variable =top_ptr=. Initialize =top_ptr= to point to the first element of 
+the contents array:
+
+=int *top_ptr = &contents[0];=
+
+Update all stack operations (=push=, =pop=, =is_empty=, =is_full=, etc.) to use 
+pointer arithmetic instead of index-based access. The stack should handle 
+integer values, support standard operations, and properly manage stack 
+overflow and underflow conditions by providing appropriate error messages 
+and terminating the program if such conditions occur.
+
+* Code
+#+begin_src C
+  #define STACK_SIZE 20 // size of our stack
+
+  /* external variables */
+  int contents[STACK_SIZE]; // modelling stack as integer array
+  int* top_ptr = &contents[0];
+
+  void make_empty()
+  {
+    top_ptr = contents; // set  pointer back to start
+  }
+
+  bool is_empty()
+  {
+    return top_ptr == contents; // is the pointer pointing at the contents[0]
+  }
+
+  bool is_full(){
+    return top_ptr == contents + STACK_SIZE; // is the pointer pointing at the contents[STACK_SIZE]
+  }
+
+  int stack_underflow(){
+    printf("Stack underflow!\n");
+    return EXIT_FAILURE;
+  }
+
+  int stack_overflow(){
+    printf("Stack overflow!\n");
+    return EXIT_FAILURE;
+  }
+
+  void push(int i){ // pushes integer argument on stack
+    if(is_full())
+      stack_overflow(); // Abort when stack is full
+    else 
+      ,*(top_ptr++) = i; // put i on top of stack
+  }
+
+  int pop(){ // Return an integer from the stack
+    if(is_empty())
+      stack_underflow(); // abort when stack is empty
+    else
+      return *(--top_ptr); // move stack pointer down
+  }
+
+  const void print_stack(){
+    printf("Stack Pointer = %ld\n", top_ptr - contents);
+    for(int* i = contents; i<contents + STACK_SIZE; i++)
+      printf("%d ", *i);
+    puts("");
+  }
+
+  // Main function
+  int main(){
+    // Print initial state
+    print_stack();
+
+    // Fill the stack
+    for(int i = 0; i<STACK_SIZE; i++)
+      push(4);
+    print_stack();
+
+    // stack overflow
+    push(3);
+
+    // Pop all elements
+    for(int i = 0; i<STACK_SIZE; i++)
+      pop();
+    print_stack();
+
+    // Stack underflow
+    pop();
+
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: Stack Pointer = 0
+: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+: Stack Pointer = 20
+: 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+: Stack overflow!
+: Stack Pointer = 0
+: 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 4 
+: Stack underflow!
+
+* Reflection
+While implementing the pointer-based stack, I got stuck at one point 
+because I was checking if the stack was full or empty incorrectly. In my 
+initial approach, I mistakenly dereferenced =top_ptr= in both the =is_empty()= 
+and =is_full()= functions like this:
+
+#+begin_example C
+bool is_empty(){
+    return (*top_ptr) == 0;
+}
+
+bool is_full(){
+    return (*top_ptr) == STACK_SIZE;
+}
+#+end_example
+
+This approach didn’t work because I was comparing the values stored in the 
+stack instead of comparing the address of top_ptr using pointer arithmetic.
+
+Overall, this was a fun exercise! :).
