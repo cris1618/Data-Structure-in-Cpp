@@ -1,0 +1,275 @@
+#+TITLE: RPN Calcuator
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> :results output :noweb yes
+
+* Problem Description
+Write a program that evaluates RPN expressions. The operands will 
+be single-digit integers, The operators are =+=,-=, =*=, =/=, and ===. The === operator 
+causes the top stack item to be displayed; afterwards, the stack is cleared 
+and the user is prompted to enter another expression. The process continues 
+until the user enters a character that is not an operator or operand.
+
+* Code
+** Stack
+#+name: Stack
+#+begin_src C
+  #define STACK_SIZE 20 // size of our stack
+
+  /* external variables */
+  int contents[STACK_SIZE]; // modelling stack as integer array
+  int* top_ptr = &contents[0];
+
+  void make_empty()
+  {
+    top_ptr = contents; // set  pointer back to start
+  }
+
+  bool is_empty()
+  {
+    return top_ptr == contents; // is the pointer pointing at the contents[0]
+  }
+
+  bool is_full(){
+    return top_ptr == contents + STACK_SIZE; // is the pointer pointing at the contents[STACK_SIZE]
+  }
+
+  void stack_underflow() {
+    fprintf(stderr, "\nNot enough operands in expression\n");
+    exit(EXIT_FAILURE);
+  }
+
+  void stack_overflow() {
+    fprintf(stderr, "\nExpression is too complex\n"); // Changed to print the error before to exit the program
+    exit(EXIT_FAILURE);
+  }
+
+  void push(int i){ // pushes integer argument on stack
+    if(is_full())
+      stack_overflow(); // Abort when stack is full
+    else 
+      ,*(top_ptr++) = i; // put i on top of stack
+  }
+
+  int pop(){ // Return an integer from the stack
+    if(is_empty())
+      stack_underflow(); // abort when stack is empty
+    else
+      return *(--top_ptr); // move stack pointer down
+  }
+
+  const void print_stack(){
+    printf("Stack Pointer = %ld\n", top_ptr - contents);
+    for(int* i = contents; i<contents + STACK_SIZE; i++)
+      printf("%d ", *i);
+    puts("");
+  }
+
+#+end_src
+
+#+RESULTS: Stack
+** RPN (One digit)
+#+begin_src bash :results output
+  echo " 1 2 3 * + =" > RPN2
+  echo " 5 8 * 4 9 - / =" >> RPN2
+  echo " 9 9 * =" >> RPN2
+  echo " o" >> RPN2
+
+  cat RPN2
+  #+end_src
+
+#+RESULTS:
+:  1 2 3 * + =
+:  5 8 * 4 9 - / =
+:  9 9 * =
+:  o
+
+#+begin_src C :cmdline < RPN2 :tangle rpn.c
+  <<Stack>>
+
+  int main(){
+    char ch;
+
+
+    printf("Enter an RPN expression: ");
+    while (1) {
+      scanf(" %c", &ch);
+      printf("%c ", ch);
+
+      if (ch >= '0' && ch <= '9') {
+        // Convert character digit to integer
+        push(ch - '0');  
+      } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+        int operand2 = pop();
+        int operand1 = pop();
+        int result;
+
+        if (ch == '+') {
+          result = operand1 + operand2;
+        } else if (ch == '-') {
+          result = operand1 - operand2;
+        } else if (ch == '*') {
+          result = operand1 * operand2;
+        } else if (ch == '/') {
+          if(operand2 != 0){
+            result = operand1 / operand2;
+          }
+          else{
+            printf("Error: divison by zero");
+            make_empty();
+            printf("Enter an RPN expression: ");
+            continue;
+          }
+        }
+        // Push the integer result back onto the stack
+        push(result); 
+      } else if (ch == '=') {
+        int fresult = pop();
+        printf("\nValue of expression: %d\n", fresult);  
+        // Reset the stack for new expressions
+        make_empty();
+        printf("Enter an RPN expression: ");
+      }else{
+        puts("\nInvalid input");
+        // Break if invalid character
+        break;
+      }
+    }
+    return 0;
+    }
+#+end_src
+
+#+RESULTS:
+: Enter an RPN expression: 1 2 3 * + = 
+: Value of expression: 7
+: Enter an RPN expression: 5 8 * 4 9 - / = 
+: Value of expression: -8
+: Enter an RPN expression: 9 9 * = 
+: Value of expression: 81
+: Enter an RPN expression: o 
+: Invalid input
+
+** RPN (More digits and Power operation)
+#+begin_src bash :results output
+echo "100 20 / 5 * 10 - 15 - =" > RPN3
+echo "1000 1000 + 2000 / =" >> RPN3
+echo "10 3 ^ 1000 / =" >> RPN3
+echo " k" >> RPN3
+cat RPN3
+#+end_src
+
+#+RESULTS:
+: 100 20 / 5 * 10 - 15 - =
+: 1000 1000 + 2000 / =
+: 10 3 ^ 1000 / =
+:  k
+
+#+begin_src C :cmdline < RPN3 :tangle rpn_general.c
+  <<Stack>>
+  // Power function
+  int pow(int a, int n){
+    int result;
+    if(n == 0)
+      return 1;
+    else
+      result = a * pow(a, n-1);
+    return result;
+    }
+
+  int main(){
+    int num = 0;
+    char ch;
+    bool reading_number = false;
+
+
+
+    printf("Enter an RPN expression: ");
+    while (1) {
+      // Read the input in a different way (not scanf)
+      ch = getchar();
+
+      if (reading_number && !isdigit(ch)) {
+        // End of a number sequence, push it to the stack
+        push(num);
+        printf("%d ", num);  // Print the parsed number
+        num = 0;  // Reset for the next number
+        reading_number = false;
+      }
+
+      // Ignore whitespace characters
+      if (ch == ' ' || ch == '\t' || ch == '\n') {
+        continue;
+      }
+
+      if(isdigit(ch)){
+        // Accumulating number with more than one digit
+        num = num * 10 + (ch - '0');
+        reading_number = true;
+      }else{
+        printf("%c ", ch);
+        if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '^') {
+          int operand2 = pop();
+          int operand1 = pop();
+          int result;
+
+          if (ch == '+') {
+            result = operand1 + operand2;
+          } else if (ch == '-') {
+            result = operand1 - operand2;
+          } else if (ch == '*') {
+            result = operand1 * operand2;
+          } else if (ch == '/') {
+            if(operand2 != 0){
+              result = operand1 / operand2;
+            }
+            else{
+              printf("Error: divison by zero");
+              make_empty();
+              printf("Enter an RPN expression: ");
+              continue;
+            }
+          } else if(ch == '^'){
+            result = pow(operand1, operand2);
+          }
+          // Push the integer result back onto the stack
+          push(result); 
+        } else if (ch == '=') {
+          int fresult = pop();
+          printf("\nValue of expression: %d\n", fresult);  
+          // Reset the stack for new expressions
+          make_empty();
+          printf("Enter an RPN expression: ");
+        }else{
+          puts("\nInvalid input");
+          // Break if invalid character
+          break;
+        }
+      }
+    }
+    return 0;
+  }
+
+
+#+end_src
+
+#+RESULTS:
+: Enter an RPN expression: 100 20 / 5 * 10 - 15 - = 
+: Value of expression: 0
+: Enter an RPN expression: 1000 1000 + 2000 / = 
+: Value of expression: 1
+: Enter an RPN expression: 10 3 ^ 1000 / = 
+: Value of expression: 1
+: Enter an RPN expression: k 
+: Invalid input
+
+* Reflection
+The tricky part of the first implementation was converting character digits into 
+integers. Fortunately, I always keep the book =The C Programming Language= on my desk, 
+and I remembered seeing something similar in the first chapter. This gave me the idea 
+to use =-'0'= to convert character digits into integers—by subtracting the =ASCII= representation 
+of the =0= digit, you can get the corresponding integer for any digit from 0 to 9.
+
+The "generalized version" was a bit more challenging because I had to use =getchar()= instead 
+of =scanf= to read characters individually and then "build" multi-digit numbers from them.
+
