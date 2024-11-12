@@ -1,0 +1,58 @@
+#+title: Strings
+#+STARTUP:overview hideblocks indent
+#+OPTIONS: toc:nil num:nil ^:nil
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> :results output :exports both :comments none :noweb yes
+
+* Initializing string variables
+#+begin_src C 
+  #define STR_LEN 80
+  char str[STR_LEN+1];
+#+end_src
+
+- Example
+#+begin_src C 
+  char date1[8] = "June 14"; // Store 7 chars in 8 char array
+  printf("%s\n", date1);
+#+end_src
+
+#+RESULTS:
+: June 14
+
+- Show that ="June 14"= is not a string literal:
+#+begin_src C
+  char date1[8] = {'J', 'u', 'n', 'e', ' ', '1', '4', '\0'};
+  printf("%s\n", date1);
+#+end_src
+
+#+RESULTS:
+: June 14
+
+- Too few characters
+#+begin_src C
+  char date2[9] = "June 14"; // Store 7 chars in a 9 char array
+  printf("%s\n", date2);
+#+end_src
+
+#+RESULTS:
+: June 14
+
+- Initializer longer than string
+#+begin_src C
+  char date3[6] = "June 14";
+  printf("%s\n", date3);
+#+end_src
+
+#+RESULTS:
+: June 1
+* Character arrays vs Character pointers
+#+begin_src C
+char date_a[] = "June 14"; // Fixed array
+char* date_p = "June 14"; // Flexible pointer
+
+printf("%s\n", date_a);
+printf("%s\n", date_p);
+#+end_src
+
+#+RESULTS:
+: June 14
+: June 14
