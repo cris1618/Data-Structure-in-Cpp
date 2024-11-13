@@ -1,0 +1,111 @@
+#+title: Strings Literals
+#+STARTUP:overview hideblocks indent
+#+OPTIONS: toc:nil num:nil ^:nil
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> :results output :exports both :comments none :noweb yes
+
+* Escape Sequence in String Literals
+#+begin_src C
+printf("Hello");
+#+end_src
+
+#+RESULTS:
+: Hello
+
+* Continuing a String Literal
+- Use \ to continue a string literal on the next line:
+#+begin_src C
+printf("\"Man only likes to count his troubles;\ he doesn't calculate his happines.\" \
+\n- Dostoyevsky.\n");
+
+#+end_src
+
+#+RESULTS:
+: Man only likes to count his troubles; he doesn't calculate his happines.
+
+#+begin_src C
+printf("\"Hi hi hi"
+"\nHi hi hi\"\n"
+"hi");
+
+#+end_src
+
+#+RESULTS:
+: Hi hi hi
+: Hi hi hi
+* How String literals are stored
+- string literals are treated as character arrays
+
+* Operating on String Literals
+#+begin_src C
+  char* p; // Character pointer
+  p = "abc"; // p points to the first character of the string
+#+end_src
+
+#+RESULTS:
+
+#+begin_src C
+  char ch;
+  ch = "abc"[1]; // assign character value 'b' to ch
+  printf("%c\n", ch);
+#+end_src
+
+#+RESULTS:
+: b
+
+#+begin_src C
+  char digit_to_hex_char(int digit){
+    return "0123456789ABCDEF"[digit];
+  }
+
+  int main(){
+    int digit = 15; // convert 15 to hexadecimal
+    char hex = digit_to_hex_char(digit);
+    printf("%d to %c\n", digit, hex);
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: 15 to F
+
+- You cannot modify a string literal:
+#+begin_src C
+  char* p= "abc"; // p points at 'a' in string
+  ,*p = 'd'; // Attempt to change value "abc"[1] to 'd' leads to a segmentation fault
+#+end_src
+
+#+RESULTS:
+
+- Pointer artithemetic
+#+begin_src C
+char* p = "abc";
+printf("%c", p[2]);
+
+#+end_src
+
+#+RESULTS:
+: c
+
+* String Literals vs Character Constants
+- The string literal "a" is represented by a pointer 
+  to the memory location that contains the character 'a'
+  followed by ='\0'=
+
+#+begin_src C
+printf("\n");
+
+#+end_src
+
+#+RESULTS:
+
+- The character constant 'a' is represented by an integer,
+  the numerical (ASCII) code for the character.
+
+#+begin_src C
+printf("%d", '\n');
+printf("\n%d", '\0');
+#+end_src
+
+#+RESULTS:
+: 10
+: 0
