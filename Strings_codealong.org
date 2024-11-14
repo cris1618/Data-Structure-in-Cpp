@@ -46,13 +46,166 @@
 : June 1
 * Character arrays vs Character pointers
 #+begin_src C
-char date_a[] = "June 14"; // Fixed array
-char* date_p = "June 14"; // Flexible pointer
+  char date_a[] = "June 14"; // Fixed array
+  char* date_p = "June 14"; // Flexible pointer
 
-printf("%s\n", date_a);
-printf("%s\n", date_p);
+  printf("%s\n", date_a);
+  printf("%s\n", date_p);
 #+end_src
 
 #+RESULTS:
 : June 14
 : June 14
+
+#+begin_src C 
+  #define STR_LEN 7
+
+  char str[STR_LEN+1] = "June 14"; // Declare String
+  char* p; // Pointer pointing to a single character
+
+  p = str; // Pointer points at str[0]
+
+  printf("%c %c %s\n", p[0], *p, p);
+
+#+end_src
+
+#+RESULTS:
+: J J June 14
+
+- Using an uninitialized pointer variable as string in an error:
+#+begin_src C
+char* p;
+p[0] = 'a'; // cannot write character just anywhere
+
+#+end_src
+
+#+RESULTS:
+
+* Writing strings
+#+begin_src C
+char str[] = "Are we having fun yet?";
+printf("%s\n", str);
+
+puts("|----|----|----|"); // puts adds \n at the end
+printf("%10.6s\n", str);
+printf("%-10.6s\n", str);
+#+end_src
+
+#+RESULTS:
+: Are we having fun yet?
+: |----|----|----|
+:     Are we
+: Are we
+
+* Reading strings with =scanf=, =gets= and =fgets=
+#+begin_src bash
+echo "Are we having fun?" > strr
+cat strr
+#+end_src
+
+#+RESULTS:
+: Are we having fun?
+
+ - =scanf= fails to read full lines:
+#+begin_src C :cmdline < strr
+char str[19];
+scanf("%s", str); // Stops when encounter white space. Also no addres-of & needed
+
+printf("%s", str);
+#+end_src
+
+#+RESULTS:
+: Are
+
+- Let's try with =gets=
+#+begin_src C :cmdline < strr
+char str[19];
+gets(str);
+printf("%s\n", str);
+
+#+end_src
+
+#+RESULTS:
+: Are we having fun?
+
+- Safety: =scanf= can be made safer with =%ns= where =n= is the max
+  number of characters to be read.
+
+- =fgets= is a safe version of =gets=.
+
+#+begin_src C :cmdline < strr
+char str[19];
+fgets(str, sizeof(str), stdin);
+printf("%s\n", str);
+#+end_src
+
+#+RESULTS:
+: Are we having fun?
+* Readig strings character by characters
+
+- Regular subscripting
+#+begin_src C
+  char str[] = "Are we having fun?";
+  int i;
+
+  for(i=0; i < sizeof(str)/sizeof(str[0]) - 1; i++){
+    printf("%c", str[i]);
+   }
+#+end_src
+
+#+RESULTS:
+: Are we having fun?
+
+- More elegant: use the knowledge about strings
+#+begin_src C
+  char str[] = "Are we having fun?";
+  int i;
+
+  for(i=0; str[i] != '\0'; i++)
+    printf("%c", str[i]);
+#+end_src
+
+#+RESULTS:
+: Are we having fun?
+- Write a function that counts the number of spaces in a string
+#+begin_src C
+  int count_spaces(const char s[]){
+    int count = 0;
+    for(int i = 0; s[i] != '\0'; i++){
+      if(s[i] == ' ')
+        count += 1;
+    }
+    return count; 
+  }
+
+  int main(){
+    char str[] = "hi hi hi";
+
+    printf("%d", count_spaces(str));
+
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: 2
+* Using the =C= string library =<string.h>=
+- Copy with =strcpy=
+#+begin_src C
+// function: strcpy
+// Return a char pointer
+// copies string s2 into string s1
+char* strcpy(char* s1, const char* s2);
+#+end_src
+
+- Quick example
+#+begin_src C
+char str[80];
+
+strcpy(str, "Hello");
+printf("%s\n", str);
+
+#+end_src
+
+#+RESULTS:
+: Hello
