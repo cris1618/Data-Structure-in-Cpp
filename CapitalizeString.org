@@ -1,0 +1,120 @@
+#+TITLE: Capitalize String
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> <ctype.h> :results output :noweb yes
+
+* Problem Description
+1) Write a function named =capitalize1= that capitalizes all letters in its argument. 
+The argument will be a =null-terminated string= containing arbitrary characters. 
+not just letters. Use array subscripting to access the characters in the string.
+
+2) Rewrite the =capitalize1= function as =capitalize2=. This time using pointer 
+arithmetic to access the characters in the string.
+
+* Code
+** Capitalize1
+#+begin_src bash
+echo "abcd abcd abcd" > capi
+cat capi 
+#+end_src
+
+#+RESULTS:
+: abcd abcd abcd
+
+#+begin_src C :cmdline < capi :tangle cap1.c
+  #define MAX_LEN 100
+  // Name: capitalize1
+  // Purpose: Capitalize all letters in its argument
+  // Argument: String pointer
+  char* capitalize1(char* str){
+    int i = 0;
+    char* new_str = malloc(strlen(str) + 1);
+    if(new_str == NULL){
+      fprintf(stderr, "Memory allocation failed\n");
+      exit(1);
+    }
+    for(i = 0; str[i] != '\0'; i++){
+      new_str[i] = toupper(str[i]);
+    }
+    new_str[i] = '\0';
+    return new_str;
+  }
+
+  int main(){
+    char str[MAX_LEN];
+
+    puts("What do you want to scream?");
+    fgets(str, sizeof(str), stdin);
+    char* cap_str = capitalize1(str);
+
+    printf("%s --> %s", str, cap_str);
+
+    // Free the memory after using the function
+    free(cap_str);
+    return 0;
+  }
+        #+end_src
+
+#+RESULTS:
+: abcd abcd abcd
+:  --> ABCD ABCD ABCD
+
+** Capitalize2 (Using pointer arithmetic)
+#+begin_src bash
+  echo "efgh efgh efgh" > capi2
+  cat capi2
+#+end_src
+
+#+RESULTS:
+: efgh efgh efgh
+
+#+begin_src C :cmdline < capi2 :tangle cap2.c
+  #define MAX_LEN 100
+  // Name: capitalize2
+  // Purpose: Capitalize all letters in its argument
+  // Argument: String pointer
+  char* capitalize2(char* str){
+    char* new_str = malloc(strlen(str) + 1);
+    if(new_str == NULL){
+      fprintf(stderr, "Memory allocation failed\n");
+      exit(1);
+    }
+
+    // Keep the initial string
+    char* start = new_str;
+
+    for(; *str != '\0'; str++){
+      ,*new_str = toupper(*str);
+      new_str++; 
+    }
+    ,*new_str = '\0';
+    return start;
+  }
+
+  int main(){
+    char str[MAX_LEN];
+
+    puts("Tell me something I don't know");
+    fgets(str, sizeof(str), stdin);
+
+    char* cap_str = capitalize2(str);
+
+    printf("%s --> %s", str, cap_str);
+
+    // Free Memory
+    free(cap_str);
+
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: efgh efgh efgh
+:  --> EFGH EFGH EFGH
+
+* Reflection
+I decided to make the function create a new string inside it and return it. 
+Probably the most interesting part was that, in the implementation using pointer 
+arithmetic, I had to save the initial pointer before iterating over it. This way, 
+I could return the correct starting address at the end. A fun exercise overall.
