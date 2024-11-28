@@ -1,0 +1,102 @@
+#+TITLE: Build a Struucture 
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> :results output :noweb yes
+
+* Problem Description
+Create a function to fill out the fields of a =Student= structure
+and return it.
+* Code
+** Structure (no ptr)
+#+begin_src C
+  typedef struct Student{
+    int roll_no;
+    char name[50];
+    float marks;
+  }Student;
+
+  // Name: create_student
+  // Purpose: fill out a new student structure
+  // Arguments: Roll number, name and mark of the student
+  // Return: Student Struct
+  struct Student create_student(int roll_no, const char* name, float marks);
+
+  int main(){
+    Student new_s;
+    
+    // Create new student
+    new_s = create_student(100, "Cristian", 10);
+
+    // Print student details
+    printf("Roll number: %d\nName: %s\nMarks: %g", new_s.roll_no, new_s.name, new_s.marks);
+
+    return 0;
+  }
+
+ struct Student create_student(int roll_no, const char* name, float marks){
+    Student new_student;
+
+    // Initialize values for the new student
+    new_student.roll_no = roll_no;
+    strcpy(new_student.name, name);
+    new_student.marks = marks;
+
+    return new_student;
+  }
+#+end_src
+
+#+RESULTS:
+: Roll number: 100
+: Name: Cristian
+: Marks: 10
+
+** Pointer Structure
+#+begin_src C
+  typedef struct Student{
+    int roll_no;
+    char name[50];
+    float marks;
+  }Student;
+
+  // Name: create_student
+  // Purpose: fill out a new student structure
+  // Arguments: Roll number, name and mark of the student
+  // Return: Pointer to Student Struct
+  struct Student* create_student(int roll_no, const char* name, float marks);
+
+  int main(){
+    Student* new_s;
+
+    new_s = create_student(100, "Cristian", 10);
+
+    // Print student fields
+    printf("Roll number: %d\nName: %s\nMark: %g", new_s->roll_no, new_s->name, new_s->marks); 
+
+    return 0;
+  }
+
+// Function definition
+ struct Student* create_student(int roll_no, const char* name, float marks){
+    Student* new_s = malloc(sizeof(Student));
+    if(new_s == NULL){
+      fprintf(new_s, "Error\n");
+      exit(1);
+    }
+
+    // Initialize student fields
+    new_s->roll_no = roll_no;
+    new_s->marks = marks;
+    strcpy(new_s->name, name);
+
+    return new_s;
+  }
+#+end_src
+
+#+RESULTS:
+: Roll number: 100
+: Name: Cristian
+: Mark: 10
+
+* Reflection
+Good exercise to practice structures. 
