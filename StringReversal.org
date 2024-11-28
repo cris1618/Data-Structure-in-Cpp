@@ -1,0 +1,105 @@
+#+TITLE: String Reversal
+#+AUTHOR: Cristian Del Gobbo (pledged)
+#+SUBTITLE: CSC 240 - Data Structures with C++ - Lyon College, Fall'24
+#+STARTUP: overview hideblocks indent
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> <stdbool.h> :results output :noweb yes
+
+* Problem Description
+Write a program that takes a string as input and prints the string in reverse.
+* Code
+** Print String
+#+begin_src bash :results output
+  echo "Hello, World! How are you doing?" > reverse
+  cat reverse
+#+end_src
+
+#+RESULTS:
+: Hello, World! How are you doing?
+
+#+begin_src C :cmdline < reverse :tangle rev_string.c
+  #define MAX_C 100
+  // Name: reverse_string
+  void reverse_string(char* str, int len){
+    char* new_str = malloc(MAX_C);
+    if(new_str == NULL){
+      fprintf(new_str, "Error in memory allocation\n");
+      exit(1);
+    }
+    for(int i = len-1; i>=0; i--){
+      printf("%c", str[i]);
+    }
+    puts("\n");
+  } 
+
+  int main(){
+    char* str = malloc(MAX_C);
+    printf("What do you think?\n");
+    fgets(str, MAX_C, stdin);
+    reverse_string(str, strlen(str));
+    free(str);
+    return 0;
+  }
+      #+end_src
+
+#+RESULTS:
+: What do you think?
+: 
+: ?gniod uoy era woH !dlroW ,olleH
+** Return String
+#+begin_src bash
+echo "Was it a cat I saw?" > reverse2
+cat reverse2
+#+end_src
+
+#+RESULTS:
+: Was it a cat I saw?
+
+#+begin_src C :cmdline < reverse2
+  #define MAX_SIZE 100
+
+  // Name: reverse_string_inp
+  // Purpose: return a reversed string
+  // Arguments: string pointer, string size
+  char* reverse_string_inp(char* str, int str_len){
+    char* rev_str = malloc(MAX_SIZE);
+    int j = 0;
+    if(rev_str == NULL){
+      fprintf(rev_str, "Error\n");
+      exit(1);
+    }
+    for(int i = str_len-1; i>=0; i--){
+      rev_str[j] = str[i];
+      j++;
+    }
+    return rev_str;
+  }
+
+  int main(){
+    char* str = malloc(MAX_SIZE);
+    if(str == NULL){
+      fprintf(str, "Error\n");
+      exit(1);
+    }
+    puts("What is the meaning of life?");
+    fgets(str, MAX_SIZE, stdin);
+    char* rev_str = reverse_string_inp(str, strlen(str));
+    printf("Original answer: %s \nReversed answer: %s", str, rev_str);
+
+    free(str);
+    free(rev_str);
+    return 0;
+  }
+#+end_src
+
+#+RESULTS:
+: What is the meaning of life?
+: Original answer: Was it a cat I saw?
+:  
+: Reversed answer: 
+: ?was I tac a ti saW
+
+* Reflection
+I wasn't sure whether the problem required creating a function to simply print 
+the string in reverse order or to return the reversed string. Therefore, for 
+practice, I implemented both approaches. It was a good exercise to practice 
+string manipulation.
