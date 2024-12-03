@@ -1,0 +1,431 @@
+#+title: Dynamical Memory Allocation
+#+STARTUP:overview hideblocks indent
+#+OPTIONS: toc:nil num:nil ^:nil
+#+PROPERTY: header-args:C :main yes :includes <stdio.h> <stdlib.h> <string.h> <time.h> :results output :exports both :comments none :noweb yes
+* README
+
+- This lecture with practice exercises covers the advanced use of
+  pointers, in preparation for understanding linked lists.
+
+- There will be a bonus home assignment to check your understanding.
+
+- There will be a video with an extended example building on the
+  extended example from the lecture on strings (task management).
+
+* Advanced use of pointers
+
+- Using /dynamical memory allocation/, a program can obtain blocks of
+  memory as needed during execution.
+
+- We'll discuss dynamically allocated strings and arrays with =malloc=
+  and their deallocation with =free=.
+
+- These structures can be linked together to form lists, trees, and
+  other flexible data structures.
+
+- We introduce /linked lists/, the most fundamental linked data
+  structure.
+
+- Advanced pointer use also includes pointers to functions: Some of
+  C's library functions expect function pointers as arguments - one of
+  these is =qsort=, which can sort any array fast (we won't cover this).
+
+- As a motivation booster, the number of programmers who master these
+  concepts is no larger than 10% world-wide. And you can get there in
+  a 200-level undergraduate class!
+
+- Differently put, in one of the densest, most complete books on C
+  programming, you're now past page 400 (few explorers get that far).
+
+* Dynamic storage allocation
+
+- C data structures are normally fixed in size:
+
+  1. The number of elements of an array is fixed after compilation.
+
+  2. In C99, a VLA length is determined at run time but it remains
+     fixed for the array's lifetime.
+
+- This is a problem because we're forced to choose the size when
+  writing a program - we cannot change it without rewriting and
+  recompiling the code.
+
+* Memory allocation functions
+
+- There are three, all defined in =<stdlib.h>=:
+
+  1. =malloc=, which allocates a memory block without initialization.
+
+  2. =calloc=, which allocates memory and clears it.
+
+  3. =realloc=, which resizes a previously allocated block of memory.
+
+- Of these, =malloc= is most used and most efficient. Check =MALLOC(3)=.
+
+- When we call =malloc= to request memory, the function has no idea what
+  type of data we plan to store there - it therefore does not return a
+  pointer to an ordinary type (=int= or =char=).
+
+- Instead, the =malloc= returns a value of type =void *=, a generic
+  pointer, which is just a memory address, to be specified later.
+
+* Null pointers
+
+- If =malloc= cannot locate a block of memory large enough to satisfy
+  our request, it returns a /null pointer/, a pointer to nothing, =NULL=.
+
+- After calling =malloc=, we must test if its =return= value is =NULL=:
+
+  #+begin_example C
+  p = malloc(1000);
+  if(p == NULL)
+  #+end_example
+
+- You can also combine these in one statement:
+
+  #+begin_example C
+  if((p=malloc(1000)) == NULL)
+  #+end_example
+
+- What is "appropriate action"?
+
+  1. Abort the program.
+
+  2. Issue warning, keep a log, save what can be saved, and continue.
+
+* Dynamically allocated strings with =malloc=
+
+- Strings are stored in character arrays and it can be hard to
+  anticipate their length.
+
+- By allocating a string dynamically, we can postpone the decision
+  until the program is running.
+
+- The =malloc= function has the following /prototype/:
+
+  #+begin_src C :results none
+  void* malloc(size_t size);
+  #+end_src
+
+- To allocate space for a string of =n= characters:
+
+  #+begin_example C
+  char* p;
+  p = malloc(n + 1);
+  #+end_example
+
+- You can also make the /cast/ from =void *= to =char *= explicit:
+
+  #+begin_example C
+  p = (char *)malloc(n+1); // explicit cast of void* -> *char
+  #+end_example
+
+- To initialize =p=, you can use =strcpy=:
+  
+  #+begin_example C
+  strcpy(p, "abc"); // p = target, "abc" is the string
+  #+end_example
+
+- What is =sizeof(p)=? Is that the length of the string stored in =p=?
+
+* Practice: Dynamically Allocating and Managing Strings (v1)
+
+Write a C program that does the following:
+
+1. Prompts the user to enter their name.
+2. Dynamically allocates memory to store the name.
+3. Copies the entered name into the allocated memory.
+4. Prints greeting message using the name stored in memory.
+5. Frees the allocated memory before exiting.
+
+Example Output:
+#+begin_example
+Enter your name: Marcus
+Hello, Marcus!
+#+end_example
+
+Hints:
+- Use =gets= (unsafe) or =fgets= (safe) to get any string (including
+  whitespace) instead of =scanf=.
+- Use =malloc= to allocate memory for the string.
+- Remember to allocate space for the null terminator =\0=.
+- Check memory allocation success with =NULL=.
+- Use =strcpy= to copy the user input into the allocated memory.
+- Use =free= to release the allocated memory.
+
+** Solution
+
+      - Sample input:
+        #+begin_src bash :results output :exports both
+          echo "Cristian" > nameInput
+          cat nameInput
+        #+end_src
+
+        #+RESULTS:
+        : Cristian
+
+      - Code (remove =main= and =includes= templates) v1: with =gets= (unsafe)
+        #+begin_src C  :cmdline < nameInput :tangle main.c :main no :includes
+          #include <stdlib.h>
+          #include <stdio.h>
+          int main(){
+            char temp[100];
+            char* name;
+
+            printf("Enter your full name: \n");
+
+            fgets(temp, sizeof(temp), stdin);
+
+            name = (char *)malloc(strlen(temp) + 1);
+            if(name == NULL){
+              printf("Abort\n");
+              exit(1);
+            }
+
+            strcpy(name, temp);
+            printf("%s", name);
+            free(name);
+
+            return 0;
+          }  
+
+
+
+        #+end_src
+
+        #+RESULTS:
+        : Enter your full name: 
+        : Cristian
+
+      - Version 2: make code safer with =fgets= (see script)
+
+* Practice: Using Command-Line Arguments with Dynamically Allocated Strings (v2)
+
+Write a C program that does the following:
+
+1. Accepts the user's full name (in quotes) as command-line argument.
+2. Dynamically allocates memory to store the name.
+3. Copies the command-line argument into the allocated memory.
+4. Prints a greeting message using the name stored in the dynamically allocated memory.
+5. Frees the allocated memory before exiting.
+
+**Example Usage:**
+#+begin_example
+$ ./main Marcus Birkenkrahe
+Hello, Marcus Birkenkrahe!
+#+end_example
+
+Hints:
+- Use =main(int argc, char *argv[])= to handle command-line arguments.
+- =argc= represents the number of arguments passed to the program.
+- =argv[1]= holds the first command-line argument after the program name.
+- Use =malloc= to allocate memory for the string.
+- Remember to allocate space for the null terminator ('=\0=')
+- Use =strcpy= to copy the cmd-line argument into the allocated memory.
+- Use =free= to release the allocated memory.
+
+** Solution:
+
+- Code without checks if arguments were provided: source code =main.c=
+  #+begin_src C :results none :tangle main2.c
+    int main(int argc, char** argv){
+      char* name;
+
+      name = (char *)malloc(strlen(argv[1] + 1));
+ 
+      strcpy(name, argv[1]);
+      printf("Hello, %s!\n", name);
+      free(name);
+
+      return 0;
+    }
+  #+end_src
+
+- Test:
+  #+begin_src bash :results output :exports both
+  gcc main2.c -o main
+  ./main "Cristian Del Gobbo"
+  #+end_src
+
+  #+RESULTS:
+  : Hello, Cristian Del Gobbo!
+
+- Version 2: Code with checks if command-line arguments were provided
+  (see script).
+
+* Using dynamic storage allocation in string functions
+
+- You can now write functions that return a pointer to a =new= string
+  that didn't exist before the function was called.
+
+- Example: concatenate two strings without changing eigher one. The C
+  standard library has =strcat= but it modifies one of them:
+
+  #+begin_src C
+    char [50] = "Hello, ";
+    char* two = "World";
+    printf("%s\n", strcat(one, two));
+  #+end_src
+
+  #+RESULTS:
+  : Hello, World
+
+- Why does the following code not work? ("Segmentation fault")
+  #+begin_src C :results silent
+  char* one = "Hello, ";
+  char* two = "World!";
+  #+end_src
+
+- The following =concat= function does this:
+
+  1) measure length of the two strings to be concatenated with =strlen=
+
+  2) call =malloc= to allocate the right amount of space
+
+  3) copy first string into new space using =strcpy=
+
+  4) concatenate second string using =strcat=
+
+- Code:
+
+  #+begin_src C :main no
+    // concat: concatenate two strings
+    // return: character pointer
+    // params: two constants char
+    char* concat(char* const str1, char* const str2){
+      size_t len1 = strlen(str1);
+      size_t len2 = strlen(str2);
+
+      char* new_s = malloc(len1 + len2 + 1);
+
+      strcpy(new_s, str1);
+      strcpy(new_s, str2);
+
+      return new_s;
+    }
+
+    int main(){
+      printf("My name is %s", concat("Cristian", "Del Gobbo"));
+
+      return 0;
+    }
+  #+end_src
+
+  #+RESULTS:
+  : My name is Del Gobbo
+
+* Dynamically allocated arrays
+
+- Strings are arrays, and dynamically allocated arrays have the same
+  advantages as dynamically allocated strings: You can wait until
+  run-time to decide an array's size.
+
+- C lets you allocate space for an array during execution and then
+  access the array through a pointer to its first element.
+
+- Sometimes, =calloc= is used instead of =malloc= since it initializes the
+  memory that it allocates. =realloc= lets us shrink or grow the array.
+
+* Using =malloc= to allocate storage for an array
+
+- To allocate an array of =n= integers where =n= is to be computed during
+  run-time, we
+
+  1) declare an integer pointer variable =int *=
+
+  2) allocate memory with =malloc= using =sizeof(int)=
+
+  3) initialize the array (can use pointer arithmetic)
+
+  4) =free= the array memory when we're done using =free(3)=.
+
+- Code:
+
+  #+begin_src C
+    #define N 5
+
+    int* a; // demo array subscripting
+    int* b; // demo pointer arithmetic
+  
+    a = malloc(N * sizeof(int)); // Memory block for a 5-element int array
+    b = malloc(N * sizeof(int));
+
+    // Initialize array with subscripts
+    for(int i = 0; i < N; i++){
+      a[i] = 1;
+      printf("%d ", a[i]);
+     }
+  
+    puts("");
+    // Initialize pointer arithmetic
+    for(int* p = b; p < b + N; p++){
+      ,*b = 2;
+      printf("%d ", *b);
+     } 
+  
+
+    free(a);
+    free(b);
+  #+end_src
+
+  #+RESULTS:
+  : 1 1 1 1 1 
+  : 2 2 2 2 2
+
+- Sometimes, you'll also see a casting operator =(int *)= before the
+  =malloc= function - because it returns a =void *= pointer by
+  default. You might see this when code is shared between C and C++.
+
+  #+begin_src C :results silent
+
+  #+end_src
+
+* Safeguarding =malloc= with =fprintf=
+
+- To ensure dynamic memory allocation is successful, it is good
+  practice to safeguard against failures using conditional checks.
+
+- The =fprintf= function can be used to display an error message to
+  =stderr= (the standard error stream) when =malloc= returns =NULL=,
+  preventing undefined behavior in the event of memory allocation
+  failure.
+
+  The script contains an example of how to use =fprintf=.
+
+* Deallocating storage with =free=
+
+- =malloc= and the other memory allocation functions obtain memory
+  blocks from the /heap/. Calling them too often may exhaust it.
+
+- The program may allocated memory and then lose track of it, wasting
+  space:
+
+  #+begin_src C
+
+  #+end_src
+
+* The "dangling pointer" problem
+
+- The call =free(p)= deallocates the memory block that =p= points to, but
+  it does not change =p= itself - it's a /dangling pointer/, and we must
+  not use it unless it is reinitialized:
+
+  #+begin_src C
+
+  #+end_src
+
+* Practice: Randomly Initialized Dynamic Arrays Using Command-Line Arguments
+
+Write a C program that:
+1. Dynamically allocates an array to store =n= integers, where =n= is
+   provided as a command-line argument.
+2. Initializes the array with random numbers between 1 and 100 using
+   the =rand()= function.
+3. Computes the sum of all elements in the array using pointer
+   arithmetic.
+4. Prints the array and the computed sum.
+5. Safeguards against memory allocation failure with =fprintf=.
+6. Frees the allocated memory after computation.
+
+
+Solution via video, see also script.
